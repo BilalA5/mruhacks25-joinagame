@@ -11,6 +11,21 @@ export default function UserProfile() {
     skillLevel: 'beginner'
   });
 
+  function SportPage() {
+    const { sportName } = useParams();
+    return <HostOrJoin selectedSport={sportName} />;
+  }
+
+  const sports = [
+    { name: "pickleball", emoji: "🏓", displayName: "Pickleball" },
+    { name: "handball", emoji: "🤾‍♂️", displayName: "Handball" },
+    { name: "table-tennis", emoji: "🏓", displayName: "Table Tennis" },
+  ];
+
+  const handleSportClick = (sportName) => {
+    navigate(`/profile`);
+  };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -205,25 +220,6 @@ export default function UserProfile() {
           </div>
 
           <div style={inputGroupStyle}>
-            <label style={labelStyle} htmlFor="sportPreferences">Favorite Sports</label>
-            <input
-              style={inputStyle}
-              type="text"
-              id="sportPreferences"
-              name="sportPreferences"
-              value={formData.sportPreferences}
-              onChange={handleInputChange}
-              placeholder="e.g., Pickleball, Table Tennis, Handball"
-              onFocus={(e) => {
-                Object.assign(e.target.style, inputFocusStyle);
-              }}
-              onBlur={(e) => {
-                Object.assign(e.target.style, inputStyle);
-              }}
-            />
-          </div>
-
-          <div style={inputGroupStyle}>
             <label style={labelStyle} htmlFor="skillLevel">Skill Level</label>
             <select
               style={selectStyle}
@@ -253,9 +249,9 @@ export default function UserProfile() {
               onMouseEnter={(e) => {
                 e.target.style.backgroundColor = '#cbd5e0';
                 e.target.style.transform = 'translateY(-2px)';
-              }}
+              }} 
               onMouseLeave={(e) => {
-                e.target.style.backgroundColor = '#e2e8f0';
+                e.target.style.backgroundColor = '#f7fdf8';
                 e.target.style.transform = 'translateY(0)';
               }}
             >
@@ -266,14 +262,20 @@ export default function UserProfile() {
               type="submit"
               style={primaryButtonStyle}
               onMouseEnter={(e) => {
-                e.target.style.backgroundColor = '#5a67d8';
-                e.target.style.transform = 'translateY(-2px)';
-                e.target.style.boxShadow = '0 6px 20px rgba(102, 126, 234, 0.4)';
+                e.target.style.backgroundColor = '#f7fdf8';
+                e.target.style.color = '#2d3748'; // dark gray for better contrast on light bg
+                e.target.style.transform = 'translateY(-3px)';
+                e.target.style.boxShadow = '0 8px 24px rgba(102, 126, 234, 0.25)';
+                e.target.style.transition =
+                  'all 0.25s ease-in-out'; // smooth transition
               }}
               onMouseLeave={(e) => {
-                e.target.style.backgroundColor = '#667eea';
+                e.target.style.backgroundColor = '#2d3748';
+                e.target.style.color = '#f7fdf8';
                 e.target.style.transform = 'translateY(0)';
-                e.target.style.boxShadow = '0 4px 15px rgba(102, 126, 234, 0.3)';
+                e.target.style.boxShadow = '0 4px 12px rgba(102, 126, 234, 0.15)';
+                e.target.style.transition =
+                  'all 0.25s ease-in-out';
               }}
             >
               Save Profile
