@@ -2,6 +2,7 @@ import './App.css'
 import { Routes, Route, useNavigate, useParams } from 'react-router-dom'
 import HostOrJoin from './hostOrJoin.jsx'
 import UserProfile from './userProfile.jsx'
+import JoinGames from './JoinGames.jsx'   // <-- NEW
 
 function SportPage() {
   const { sportName } = useParams();
@@ -28,6 +29,7 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={
+        /* ... your existing landing JSX ... */
         <div
           style={{
             height: '100vh',
@@ -138,14 +140,10 @@ function App() {
           </div>
         </div>
       } />
-      
-      <Route path="/sport/:sportName" element={
-        <SportPage />
-      } />
-      
-      <Route path="/profile" element={
-        <UserProfilePage />
-      } />
+
+      <Route path="/sport/:sportName" element={<SportPage />} />
+      <Route path="/join/:sportName" element={<JoinGames />} />  {/* <-- NEW */}
+      <Route path="/profile" element={<UserProfilePage />} />
     </Routes>
   );
 }
