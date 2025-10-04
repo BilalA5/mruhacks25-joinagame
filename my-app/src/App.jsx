@@ -1,10 +1,15 @@
 import './App.css'
 import { Routes, Route, useNavigate, useParams } from 'react-router-dom'
 import HostOrJoin from './hostOrJoin.jsx'
+import UserProfile from './userProfile.jsx'
 
 function SportPage() {
   const { sportName } = useParams();
   return <HostOrJoin selectedSport={sportName} />;
+}
+
+function UserProfilePage() {
+  return <UserProfile />; 
 }
 
 function App() {
@@ -13,7 +18,7 @@ function App() {
   const sports = [
     { name: 'pickleball', emoji: '🏓', displayName: 'Pickleball' },
     { name: 'handball', emoji: '🤾‍♂️', displayName: 'Handball' },
-    { name: 'table-tennis', emoji: '🏓', displayName: 'Table Tennis' },
+    { name: 'table-tennis', emoji: '🥎', displayName: 'Table Tennis' },
   ];
 
   const handleSportClick = (sportName) => {
@@ -136,6 +141,10 @@ function App() {
       
       <Route path="/sport/:sportName" element={
         <SportPage />
+      } />
+      
+      <Route path="/profile" element={
+        <UserProfilePage />
       } />
     </Routes>
   );
