@@ -3,5 +3,29 @@
         "pickleball",
         "table tennis",
         "handball"
-    ]
+    ],
+
+    "user_profile": {
+        "name": "{name}",
+        "email": "{email}",
+        "contact_info": "{contact_info}",
+        "sport_preferences" : "{sport_preferences}"
+    },
+
+    "game_logic":{
+        "host_game": {
+            "sport": "{sport_hosting}",
+            "players": "{players_hosting}",
+            "host_contact" : "{host_contact}"
+        },
+
+        "join_game": {
+            "sport": "{sport_joining}",
+            "players": "{players_joining}",
+            "joiner_contact" : "{joiner_contact}"
+        }
+    }
+    
+
+    
 }
