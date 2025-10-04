@@ -1,35 +1,122 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const sports = [
+    { name: 'Pickleball', emoji: '🏓' },
+    { name: 'Handball', emoji: '🤾‍♂️' },
+    { name: 'Table Tennis', emoji: '🏓' },
+  ];
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
+    <div
+      style={{
+        height: '100vh',
+        width: '100vw',
+        background: 'linear-gradient(180deg, #ffffff 0%, #f7fdf8 100%)',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontFamily: 'Poppins, Arial, sans-serif',
+        overflow: 'hidden',
+      }}
+    >
+      {/* Header */}
+      <div style={{ textAlign: 'center', marginBottom: '60px' }}>
+        <h1
+          style={{
+            color: '#16a34a',
+            fontSize: '3.5rem',
+            fontWeight: '700',
+            letterSpacing: '-1px',
+            marginBottom: '10px',
+          }}
+        >
+          joinAGame
+        </h1>
+        <p
+          style={{
+            color: '#4b5563',
+            fontSize: '1.2rem',
+            fontWeight: '400',
+            letterSpacing: '0.3px',
+          }}
+        >
+          Connect. Compete. Have fun.
         </p>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+
+      {/* Sport Cards */}
+      <div
+        style={{
+          display: 'flex',
+          gap: '50px',
+          flexWrap: 'wrap',
+          justifyContent: 'center',
+          maxWidth: '900px',
+        }}
+      >
+        {sports.map((sport) => (
+          <div
+            key={sport.name}
+            style={{
+              background: '#ffffff',
+              borderRadius: '20px',
+              width: '220px',
+              height: '220px',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow:
+                '0 10px 30px rgba(22,163,74,0.1), 0 4px 12px rgba(0,0,0,0.05)',
+              transition: 'all 0.35s ease',
+              cursor: 'pointer',
+              border: '1px solid #e5e7eb',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-8px) scale(1.05)';
+              e.currentTarget.style.boxShadow =
+                '0 16px 40px rgba(22,163,74,0.25), 0 8px 16px rgba(0,0,0,0.08)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0) scale(1)';
+              e.currentTarget.style.boxShadow =
+                '0 10px 30px rgba(22,163,74,0.1), 0 4px 12px rgba(0,0,0,0.05)';
+            }}
+          >
+            <span style={{ fontSize: '3.5rem', marginBottom: '15px' }}>
+              {sport.emoji}
+            </span>
+            <span
+              style={{
+                fontSize: '1.2rem',
+                fontWeight: '600',
+                color: '#14532d',
+                letterSpacing: '0.5px',
+              }}
+            >
+              {sport.name}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      {/* Footer */}
+      <div
+        style={{
+          position: 'absolute',
+          bottom: '25px',
+          textAlign: 'center',
+          color: '#9ca3af',
+          fontSize: '0.9rem',
+          letterSpacing: '0.4px',
+        }}
+      >
+        <p>LINKING the world to make a better place • joinAGame © 2025</p>
+      </div>
+    </div>
+  );
 }
 
-export default App
+export default App;
