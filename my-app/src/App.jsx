@@ -1,26 +1,41 @@
 import './App.css'
+import { Routes, Route, useNavigate, useParams } from 'react-router-dom'
+import HostOrJoin from './hostOrJoin.jsx'
+
+function SportPage() {
+  const { sportName } = useParams();
+  return <HostOrJoin selectedSport={sportName} />;
+}
 
 function App() {
+  const navigate = useNavigate();
+  
   const sports = [
-    { name: 'Pickleball', emoji: '🏓' },
-    { name: 'Handball', emoji: '🤾‍♂️' },
-    { name: 'Table Tennis', emoji: '🏓' },
+    { name: 'pickleball', emoji: '🏓', displayName: 'Pickleball' },
+    { name: 'handball', emoji: '🤾‍♂️', displayName: 'Handball' },
+    { name: 'table-tennis', emoji: '🏓', displayName: 'Table Tennis' },
   ];
 
+  const handleSportClick = (sportName) => {
+    navigate(`/sport/${sportName}`);
+  };
+
   return (
-    <div
-      style={{
-        height: '100vh',
-        width: '100vw',
-        background: 'linear-gradient(180deg, #ffffff 0%, #f7fdf8 100%)',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontFamily: 'Poppins, Arial, sans-serif',
-        overflow: 'hidden',
-      }}
-    >
+    <Routes>
+      <Route path="/" element={
+        <div
+          style={{
+            height: '100vh',
+            width: '100vw',
+            background: 'linear-gradient(180deg, #ffffff 0%, #f7fdf8 100%)',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontFamily: 'Poppins, Arial, sans-serif',
+            overflow: 'hidden',
+          }}
+        >
       {/* Header */}
       <div style={{ textAlign: 'center', marginBottom: '60px' }}>
         <h1
@@ -84,6 +99,7 @@ function App() {
               e.currentTarget.style.boxShadow =
                 '0 10px 30px rgba(22,163,74,0.1), 0 4px 12px rgba(0,0,0,0.05)';
             }}
+            onClick={() => handleSportClick(sport.name)}
           >
             <span style={{ fontSize: '3.5rem', marginBottom: '15px' }}>
               {sport.emoji}
@@ -96,7 +112,7 @@ function App() {
                 letterSpacing: '0.5px',
               }}
             >
-              {sport.name}
+              {sport.displayName}
             </span>
           </div>
         ))}
@@ -116,6 +132,12 @@ function App() {
         <p>LINKING the world to make a better place • joinAGame © 2025</p>
       </div>
     </div>
+      } />
+      
+      <Route path="/sport/:sportName" element={
+        <SportPage />
+      } />
+    </Routes>
   );
 }
 

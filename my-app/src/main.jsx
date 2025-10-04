@@ -1,9 +1,11 @@
 // src/main.jsx
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import { BrowserRouter } from 'react-router-dom'
 import './index.css'
 import App from './App.jsx'
 
+<<<<<<< HEAD
 // Keep a reference to the React root so we can unmount later
 let root;
 
@@ -40,3 +42,12 @@ export { App };
 
 // Default export = mount function (handy for consumers)
 export default mount;
+=======
+createRoot(document.getElementById('root')).render(
+  <StrictMode>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </StrictMode>,
+)
+>>>>>>> cb5778e874d9e90436f45ea2eb555e77756e55aa
