@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import './App.css'
 import { Routes, Route, useNavigate, useParams } from 'react-router-dom'
 import HostOrJoin from './hostOrJoin.jsx'
@@ -6,6 +7,9 @@ function SportPage() {
   const { sportName } = useParams();
   return <HostOrJoin selectedSport={sportName} />;
 }
+=======
+import './index.css';
+>>>>>>> 4e8aa619f31474382532a25a7255482691882d05
 
 function App() {
   const navigate = useNavigate();
@@ -21,6 +25,7 @@ function App() {
   };
 
   return (
+<<<<<<< HEAD
     <Routes>
       <Route path="/" element={
         <div
@@ -62,74 +67,128 @@ function App() {
       </div>
 
       {/* Sport Cards */}
+=======
+    <div
+      style={{
+        height: '100vh',
+        width: '100vw',
+        background: '#ffffff',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        overflow: 'hidden',
+      }}
+    >
+>>>>>>> 4e8aa619f31474382532a25a7255482691882d05
       <div
         style={{
+          width: 'min(1000px, 92vw)',
           display: 'flex',
-          gap: '50px',
-          flexWrap: 'wrap',
+          flexDirection: 'column',
+          alignItems: 'center',
           justifyContent: 'center',
-          maxWidth: '900px',
+          textAlign: 'center',
+          gap: '3rem',
         }}
       >
-        {sports.map((sport) => (
-          <div
-            key={sport.name}
+        {/* Title */}
+        <div>
+          <h1
             style={{
-              background: '#ffffff',
-              borderRadius: '20px',
-              width: '220px',
-              height: '220px',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              boxShadow:
-                '0 10px 30px rgba(22,163,74,0.1), 0 4px 12px rgba(0,0,0,0.05)',
-              transition: 'all 0.35s ease',
-              cursor: 'pointer',
-              border: '1px solid #e5e7eb',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-8px) scale(1.05)';
-              e.currentTarget.style.boxShadow =
-                '0 16px 40px rgba(22,163,74,0.25), 0 8px 16px rgba(0,0,0,0.08)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0) scale(1)';
-              e.currentTarget.style.boxShadow =
-                '0 10px 30px rgba(22,163,74,0.1), 0 4px 12px rgba(0,0,0,0.05)';
+              margin: 0,
+              color: '#16a34a', // lighter green
+              fontSize: '3.2rem',
+              fontWeight: 800,
+              fontFamily: 'Poppins, sans-serif',
+              letterSpacing: '-0.5px',
             }}
             onClick={() => handleSportClick(sport.name)}
           >
-            <span style={{ fontSize: '3.5rem', marginBottom: '15px' }}>
-              {sport.emoji}
-            </span>
-            <span
+            joinAGame
+          </h1>
+          <p
+            style={{
+              marginTop: '12px',
+              color: '#4b5563',
+              fontSize: '1.1rem',
+              fontWeight: 500,
+              fontFamily: 'Inter, sans-serif',
+            }}
+          >
+            Get LINKED. HOST games. Play ANYWHERE.
+          </p>
+        </div>
+
+        {/* Sport Cards */}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+            gap: '28px',
+            width: '100%',
+          }}
+        >
+          {sports.map((sport) => (
+            <button
+              key={sport.name}
               style={{
-                fontSize: '1.2rem',
-                fontWeight: '600',
-                color: '#14532d',
-                letterSpacing: '0.5px',
+                appearance: 'none',
+                border: '1px solid #e5e7eb',
+                background: '#ffffff',
+                borderRadius: '20px',
+                aspectRatio: '1 / 1',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
+                boxShadow: '0 8px 18px rgba(22,163,74,0.12)',
+                transition: 'transform 0.25s ease, box-shadow 0.25s ease',
+                cursor: 'pointer',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-6px) scale(1.05)';
+                e.currentTarget.style.boxShadow = '0 16px 36px rgba(22,163,74,0.25)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                e.currentTarget.style.boxShadow = '0 8px 18px rgba(22,163,74,0.12)';
               }}
             >
+<<<<<<< HEAD
               {sport.displayName}
             </span>
           </div>
         ))}
       </div>
+=======
+              <span style={{ fontSize: '2.8rem' }}>{sport.emoji}</span>
+              <span
+                style={{
+                  fontSize: '1.2rem',
+                  fontWeight: 600,
+                  marginTop: '10px',
+                  color: '#15803d',
+                  fontFamily: 'Inter, sans-serif',
+                }}
+              >
+                {sport.name}
+              </span>
+            </button>
+          ))}
+        </div>
+>>>>>>> 4e8aa619f31474382532a25a7255482691882d05
 
-      {/* Footer */}
-      <div
-        style={{
-          position: 'absolute',
-          bottom: '25px',
-          textAlign: 'center',
-          color: '#9ca3af',
-          fontSize: '0.9rem',
-          letterSpacing: '0.4px',
-        }}
-      >
-        <p>LINKING the world to make a better place • joinAGame © 2025</p>
+        {/* Footer */}
+        <div
+          style={{
+            color: '#6b7280',
+            fontSize: '0.9rem',
+            fontFamily: 'Inter, sans-serif',
+            marginTop: '1rem',
+          }}
+        >
+          © 2025 joinAGame • Calgary
+        </div>
       </div>
     </div>
       } />
