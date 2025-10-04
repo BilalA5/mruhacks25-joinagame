@@ -1,30 +1,25 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 
 export default function UserProfile() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [formData, setFormData] = useState({
     name: '',
-    email: '',
     phone: '',
     sportPreferences: '',
     skillLevel: 'beginner'
   });
+  const [showSuccessAlert, setShowSuccessAlert] = useState(false);
+  const [selectedSport, setSelectedSport] = useState('pickleball'); // default fallback
 
-  function SportPage() {
-    const { sportName } = useParams();
-    return <HostOrJoin selectedSport={sportName} />;
-  }
-
-  const sports = [
-    { name: "pickleball", emoji: "🏓", displayName: "Pickleball" },
-    { name: "handball", emoji: "🤾‍♂️", displayName: "Handball" },
-    { name: "table-tennis", emoji: "🏓", displayName: "Table Tennis" },
-  ];
-
-  const handleSportClick = (sportName) => {
-    navigate(`/profile`);
-  };
+  // Get the selected sport from the previous page
+  useEffect(() => {
+    const sportFromState = location.state?.selectedSport;
+    if (sportFromState) {
+      setSelectedSport(sportFromState);
+    }
+  }, [location.state]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -36,9 +31,26 @@ export default function UserProfile() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Save user data (you can implement this later)
-    console.log('User data:', formData);
-    navigate("/");
+    
+    // Show success animation
+    setShowSuccessAlert(true);
+    
+    // Save user data to localStorage
+    const userData = {
+      ...formData,
+      selectedSport: selectedSport,
+      timestamp: new Date().toISOString()
+    };
+    localStorage.setItem('userProfile', JSON.stringify(userData));
+    
+    console.log('User data saved:', userData);
+    
+    // Hide alert and redirect after animation
+    setTimeout(() => {
+      setShowSuccessAlert(false);
+      // Navigate to HostOrJoin with the selected sport
+      navigate(`/sport/${selectedSport}`);
+    }, 2000);
   };
 
   const handleBackToHome = () => {
@@ -171,9 +183,97 @@ export default function UserProfile() {
     boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
   };
 
+  // Success alert styles
+  const successAlertStyle = {
+    position: 'fixed',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    backgroundColor: '#10b981',
+    color: 'white',
+    padding: '20px 40px',
+    borderRadius: '15px',
+    boxShadow: '0 10px 30px rgba(16, 185, 129, 0.3)',
+    fontSize: '1.2rem',
+    fontWeight: '600',
+    zIndex: 1000,
+    display: 'flex',
+    alignItems: 'center',
+    gap: '10px',
+    animation: showSuccessAlert ? 'slideInScale 0.5s ease-out' : 'slideOutScale 0.5s ease-out',
+  };
+
+  // Overlay style
+  const overlayStyle = {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    zIndex: 999,
+    display: showSuccessAlert ? 'block' : 'none',
+  };
+
   return (
-    <div style={containerStyle}>
-      <div style={cardStyle}>
+    <>
+      {/* CSS Animations */}
+      <style>
+        {`
+          @keyframes slideInScale {
+            0% {
+              opacity: 0;
+              transform: translate(-50%, -50%) scale(0.5);
+            }
+            100% {
+              opacity: 1;
+              transform: translate(-50%, -50%) scale(1);
+            }
+          }
+          
+          @keyframes slideOutScale {
+            0% {
+              opacity: 1;
+              transform: translate(-50%, -50%) scale(1);
+            }
+            100% {
+              opacity: 0;
+              transform: translate(-50%, -50%) scale(0.5);
+            }
+          }
+          
+          @keyframes checkmark {
+            0% {
+              stroke-dashoffset: 100;
+            }
+            100% {
+              stroke-dashoffset: 0;
+            }
+          }
+          
+          .success-checkmark {
+            stroke-dasharray: 100;
+            stroke-dashoffset: 100;
+            animation: checkmark 0.8s ease-out 0.3s forwards;
+          }
+        `}
+      </style>
+
+      {/* Success Alert Overlay */}
+      {showSuccessAlert && (
+        <div style={overlayStyle}>
+          <div style={successAlertStyle}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path className="success-checkmark" d="M9 12l2 2 4-4" />
+              <circle cx="12" cy="12" r="10" />
+            </svg>
+            Profile saved successfully!
+          </div>
+        </div>
+      )}
+
+      <div style={containerStyle}>
+        <div style={cardStyle}>
         <h1 style={titleStyle}>User Profile</h1>
         <p style={subtitleStyle}>
           Tell us about yourself to get matched with the perfect games
@@ -282,7 +382,8 @@ export default function UserProfile() {
             </button>
           </div>
         </form>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

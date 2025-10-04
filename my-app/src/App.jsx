@@ -5,7 +5,7 @@ import UserProfile from './userProfile.jsx'
 
 function SportPage() {
   const { sportName } = useParams();
-  return UserProfilePage();
+  return <HostOrJoin selectedSport={sportName} />;
 }
 
 function UserProfilePage() {
@@ -22,7 +22,7 @@ function App() {
   ];
 
   const handleSportClick = (sportName) => {
-    navigate(`profile`);
+    navigate('/profile', { state: { selectedSport: sportName } });
   };
 
   return (
@@ -139,7 +139,7 @@ function App() {
         </div>
       } />
       
-      <Route path="/profile" element={
+      <Route path="/sport/:sportName" element={
         <SportPage />
       } />
       
