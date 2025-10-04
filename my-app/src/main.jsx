@@ -1,53 +1,25 @@
 // src/main.jsx
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import { BrowserRouter } from 'react-router-dom'
-import './index.css'
-import App from './App.jsx'
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App.jsx';
+import './index.css';
 
-<<<<<<< HEAD
-// Keep a reference to the React root so we can unmount later
+// Keep a reference to the React root so we can unmount later (optional)
 let root;
 
-/**
- * Mount the app into a container and return the React root.
- * Consumers can pass initial props for <App />.
- */
-export function mount(container = document.getElementById('root'), appProps = {}) {
-  if (!container) throw new Error('mount: container element not found');
-  root = createRoot(container);
-  root.render(
-    <StrictMode>
-      <App {...appProps} />
-    </StrictMode>
-  );
-  return root;
-}
+const container = document.getElementById('root');
+root = ReactDOM.createRoot(container);
 
-/** Unmount the app if it has been mounted. */
+root.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
+
+// Optional: export unmount for tests/hot swaps
 export function unmount() {
   if (root) {
     root.unmount();
-    root = undefined;
+    root = null;
   }
 }
-
-// SPA behavior: auto-mount when there's a #root on the page
-if (document.getElementById('root')) {
-  mount();
-}
-
-// Optional: export the component too (useful for testing or embedding)
-export { App };
-
-// Default export = mount function (handy for consumers)
-export default mount;
-=======
-createRoot(document.getElementById('root')).render(
-  <StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
-  </StrictMode>,
-)
->>>>>>> cb5778e874d9e90436f45ea2eb555e77756e55aa
