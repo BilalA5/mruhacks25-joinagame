@@ -1,0 +1,23 @@
+{
+  "name": "mruhacks25-joinagame",
+  "version": "1.0.0",
+  "description": "Join/Host games such as pickleball, table tennis, handball.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BilalA5/mruhacks25-joinagame.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BilalA5/mruhacks25-joinagame/issues"
+  },
+  "homepage": "https://github.com/BilalA5/mruhacks25-joinagame#readme"
+  
+}
