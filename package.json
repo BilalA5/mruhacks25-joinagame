@@ -18,6 +18,8 @@
   "bugs": {
     "url": "https://github.com/BilalA5/mruhacks25-joinagame/issues"
   },
-  "homepage": "https://github.com/BilalA5/mruhacks25-joinagame#readme"
-  
+  "homepage": "https://github.com/BilalA5/mruhacks25-joinagame#readme",
+  "dependencies": {
+    "eslint": "^9.37.0"
+  }
 }
