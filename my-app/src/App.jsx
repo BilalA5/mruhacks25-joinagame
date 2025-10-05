@@ -33,15 +33,18 @@ function App() {
         /* ... your existing landing JSX ... */
         <div
           style={{
-            height: '100vh',
-            width: '100vw',
+            minHeight: '100vh',
+            width: '100%',
             background: 'linear-gradient(180deg, #ffffff 0%, #f7fdf8 100%)',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
             fontFamily: 'Poppins, Arial, sans-serif',
-            overflow: 'hidden',
+            overflowY: 'auto',
+            overflowX: 'hidden',
+            padding: '20px',
+            boxSizing: 'border-box',
           }}
         >
           {/* Header */}

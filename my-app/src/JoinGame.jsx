@@ -98,11 +98,13 @@ export default function JoinGame() {
   // Styles
   const containerStyle = {
     minHeight: '100vh',
-    width: '100vw',
+    width: '100%',
     background: 'linear-gradient(180deg, #ffffff 0%, #f7fdf8 100%)',
     fontFamily: 'Poppins, Arial, sans-serif',
-    padding: '20px',
+    padding: '80px 20px 20px 20px', // Added top padding for back button
     boxSizing: 'border-box',
+    overflowY: 'auto',
+    overflowX: 'hidden',
   };
 
   const headerStyle = {
@@ -128,7 +130,7 @@ export default function JoinGame() {
     gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))',
     gap: '20px',
     maxWidth: '1200px',
-    margin: '0 auto',
+    margin: '0 auto 60px auto', // Added bottom margin for better scrolling
   };
 
   const gameCardStyle = {
@@ -236,6 +238,7 @@ export default function JoinGame() {
     boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
     cursor: 'pointer',
     transition: 'all 0.25s ease',
+    zIndex: 1000, // Ensure button stays above content
   };
 
   const successAlertStyle = {

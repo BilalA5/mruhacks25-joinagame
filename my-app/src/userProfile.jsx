@@ -149,7 +149,7 @@ export default function UserProfile() {
   // Main container style
   const containerStyle = {
     minHeight: '100vh',
-    width: '100vw',
+    width: '100%',
     background: 'linear-gradient(180deg, #ffffff 0%, #f7fdf8 100%)',
     display: 'flex',
     flexDirection: 'column',
@@ -158,6 +158,8 @@ export default function UserProfile() {
     fontFamily: 'Poppins, Arial, sans-serif',
     padding: '20px',
     boxSizing: 'border-box',
+    overflowY: 'auto',
+    overflowX: 'hidden',
   };
 
   // Card style
@@ -252,7 +254,7 @@ export default function UserProfile() {
   const primaryButtonStyle = {
     padding: '15px 30px',
     borderRadius: '12px',
-    backgroundColor: '#667eea',
+    backgroundColor: '#16a34a',
     color: 'white',
     border: 'none',
     fontSize: '1rem',
@@ -260,7 +262,7 @@ export default function UserProfile() {
     fontFamily: 'Poppins, Arial, sans-serif',
     cursor: 'pointer',
     transition: 'all 0.3s ease',
-    boxShadow: '0 4px 15px rgba(102, 126, 234, 0.3)',
+    boxShadow: '0 4px 15px rgba(22, 163, 74, 0.3)',
     minWidth: '120px',
   };
 

@@ -179,6 +179,96 @@
       },
       "createdAt": "2025-10-05T02:14:02.022Z",
       "updatedAt": "2025-10-05T02:14:02.022Z"
+    },
+    {
+      "id": "mgd2mk0v13f5f48n3ign",
+      "name": "haris",
+      "phone": "1313131313",
+      "skillLevel": "advanced",
+      "selectedSport": "table-tennis",
+      "preferences": {
+        "favoriteSports": [
+          "table-tennis"
+        ],
+        "skillLevel": "advanced"
+      },
+      "createdAt": "2025-10-05T02:16:39.391Z",
+      "updatedAt": "2025-10-05T02:16:39.391Z"
+    },
+    {
+      "id": "mgd2pvj0cohfmljhaz",
+      "name": "haris",
+      "phone": "1414141414",
+      "skillLevel": "intermediate",
+      "selectedSport": "table-tennis",
+      "preferences": {
+        "favoriteSports": [
+          "table-tennis"
+        ],
+        "skillLevel": "intermediate"
+      },
+      "createdAt": "2025-10-05T02:19:14.268Z",
+      "updatedAt": "2025-10-05T02:19:14.268Z"
+    },
+    {
+      "id": "mgd2qode4tpxbw7qnn6",
+      "name": "arisda",
+      "phone": "4141414141",
+      "skillLevel": "intermediate",
+      "selectedSport": "table-tennis",
+      "preferences": {
+        "favoriteSports": [
+          "table-tennis"
+        ],
+        "skillLevel": "intermediate"
+      },
+      "createdAt": "2025-10-05T02:19:51.650Z",
+      "updatedAt": "2025-10-05T02:19:51.650Z"
+    },
+    {
+      "id": "mgd2uckugb0anlngbbw",
+      "name": "haris",
+      "phone": "1231313131",
+      "skillLevel": "advanced",
+      "selectedSport": "handball",
+      "preferences": {
+        "favoriteSports": [
+          "handball"
+        ],
+        "skillLevel": "advanced"
+      },
+      "createdAt": "2025-10-05T02:22:42.990Z",
+      "updatedAt": "2025-10-05T02:22:42.990Z"
+    },
+    {
+      "id": "mgd2ur2hjncf47747yr",
+      "name": "sxzassa",
+      "phone": "1231313131",
+      "skillLevel": "advanced",
+      "selectedSport": "table-tennis",
+      "preferences": {
+        "favoriteSports": [
+          "table-tennis"
+        ],
+        "skillLevel": "advanced"
+      },
+      "createdAt": "2025-10-05T02:23:01.769Z",
+      "updatedAt": "2025-10-05T02:23:01.769Z"
+    },
+    {
+      "id": "mgd2yw8vvoeyeargn4",
+      "name": "harisxz",
+      "phone": "2141141414",
+      "skillLevel": "advanced",
+      "selectedSport": "table-tennis",
+      "preferences": {
+        "favoriteSports": [
+          "table-tennis"
+        ],
+        "skillLevel": "advanced"
+      },
+      "createdAt": "2025-10-05T02:26:15.103Z",
+      "updatedAt": "2025-10-05T02:26:15.103Z"
     }
   ],
   "games": [
@@ -240,66 +330,15 @@
           "userId": "mgd2cze7rk4iup23o4",
           "playerName": "dadadf",
           "joinedAt": "2025-10-05T02:09:19.708Z"
+        },
+        {
+          "userId": "mgd2qode4tpxbw7qnn6",
+          "playerName": "arisda",
+          "joinedAt": "2025-10-05T02:21:55.909Z"
         }
       ],
       "createdAt": "2025-10-05T02:07:50.280Z",
-      "updatedAt": "2025-10-05T02:09:19.708Z",
-      "status": "open"
-    },
-    {
-      "id": "mgd2dla5hzdk6zeue3p",
-      "title": "mid ball up",
-      "description": "Bring your own gear. All levels welcome.",
-      "sport": "table-tennis",
-      "location": "8, Holly Street NW, Highwood, Calgary, Alberta, T2K 3H8, Canada",
-      "date": "2025-10-05",
-      "time": "02:54 AM",
-      "maxPlayers": 4,
-      "skillLevel": "Lobby",
-      "contactInfo": "2313131313",
-      "hostId": "mgd2cze7rk4iup23o4",
-      "hostName": "dadadf",
-      "lat": 51.09083472500682,
-      "lng": -114.08648943293885,
-      "players": [],
-      "createdAt": "2025-10-05T02:09:41.117Z",
-      "updatedAt": "2025-10-05T02:09:41.117Z",
-      "status": "open"
-    },
-    {
-      "id": "mgd2f2j67j2emtqkycg",
-      "title": "test123",
-      "description": "Bring your own gear. All levels welcome.",
-      "sport": "pickleball",
-      "location": "45 Street SW, Wildwood, Calgary, Alberta, T3C 3C8, Canada",
-      "date": "2025-10-05",
-      "time": "02:55 AM",
-      "maxPlayers": 4,
-      "skillLevel": "Lobby",
-      "contactInfo": "2313131313",
-      "hostId": "mgd2etqtazdwzxennbi",
-      "hostName": "Bilal Ahmed",
-      "lat": 51.053487328279274,
-      "lng": -114.15238501867738,
-      "players": [
-        {
-          "userId": "mgd2folfqe8j4zhj0gn",
-          "playerName": "dfsfs",
-          "joinedAt": "2025-10-05T02:11:28.838Z"
-        },
-        {
-          "userId": "mgd2ic33tokd0x0nu4m",
-          "playerName": "tesasda",
-          "joinedAt": "2025-10-05T02:13:28.253Z"
-        },
-        {
-          "userId": "mgd2j6lififsimeh99",
-          "playerName": "dfsfsfsasd",
-          "joinedAt": "2025-10-05T02:14:14.562Z"
-        }
-      ],
-      "createdAt": "2025-10-05T02:10:50.130Z",
-      "updatedAt": "2025-10-05T02:14:14.562Z",
+      "updatedAt": "2025-10-05T02:21:55.909Z",
       "status": "open"
     },
     {
@@ -523,9 +562,15 @@
       "hostName": "Mock Host 1",
       "lat": 51.0347,
       "lng": -114.0819,
-      "players": [],
+      "players": [
+        {
+          "userId": "mgd2qode4tpxbw7qnn6",
+          "playerName": "arisda",
+          "joinedAt": "2025-10-05T02:21:59.403Z"
+        }
+      ],
       "createdAt": "2025-10-05T02:13:51.411Z",
-      "updatedAt": "2025-10-05T02:13:51.411Z",
+      "updatedAt": "2025-10-05T02:21:59.403Z",
       "status": "open"
     },
     {
@@ -543,9 +588,15 @@
       "hostName": "Mock Host 2",
       "lat": 51.0647,
       "lng": -114.0719,
-      "players": [],
+      "players": [
+        {
+          "userId": "mgd2qode4tpxbw7qnn6",
+          "playerName": "arisda",
+          "joinedAt": "2025-10-05T02:22:02.887Z"
+        }
+      ],
       "createdAt": "2025-10-05T02:13:51.411Z",
-      "updatedAt": "2025-10-05T02:13:51.411Z",
+      "updatedAt": "2025-10-05T02:22:02.887Z",
       "status": "open"
     },
     {
@@ -607,6 +658,26 @@
       "createdAt": "2025-10-05T02:13:51.411Z",
       "updatedAt": "2025-10-05T02:13:51.411Z",
       "status": "open"
+    },
+    {
+      "id": "mgd2ng17iv5o4pt81ql",
+      "title": "Table Tennis Friendly - Haris",
+      "description": "Bring your own gear. All levels NOT welcome.",
+      "sport": "table-tennis",
+      "location": "40, Carrington Rise NW, Carrington, Calgary, Alberta, T3P 0C9, Canada",
+      "date": "2025-10-05",
+      "time": "03:01 AM",
+      "maxPlayers": 4,
+      "skillLevel": "Lobby",
+      "contactInfo": "1313131313",
+      "hostId": "mgd2mk0v13f5f48n3ign",
+      "hostName": "haris",
+      "lat": 51.18041007255063,
+      "lng": -114.08894509866292,
+      "players": [],
+      "createdAt": "2025-10-05T02:17:20.875Z",
+      "updatedAt": "2025-10-05T02:17:20.875Z",
+      "status": "open"
     }
   ],
   "sports": [
@@ -614,5 +685,5 @@
     "handball",
     "table-tennis"
   ],
-  "lastUpdated": "2025-10-05T02:14:25.361Z"
+  "lastUpdated": "2025-10-05T02:26:15.103Z"
 }

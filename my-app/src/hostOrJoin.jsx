@@ -18,16 +18,19 @@ export default function HostOrJoin({ selectedSport }) {
   };
 
   const pageStyle = {
-    height: "100vh",
-    width: "100vw",
+    minHeight: "100vh",
+    width: "100%",
     background: "linear-gradient(180deg, #ffffff 0%, #f7fdf8 100%)",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
     fontFamily: "Poppins, Arial, sans-serif",
-    overflow: "hidden",
+    overflowY: "auto",
+    overflowX: "hidden",
     position: "relative",
+    padding: "20px",
+    boxSizing: "border-box",
   };
 
   const headerWrap = { textAlign: "center", marginBottom: 50, maxWidth: 900, padding: "0 20px" };

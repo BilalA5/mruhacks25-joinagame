@@ -178,14 +178,16 @@ export default function JoinGames() {
   // ---- styles ----
   // NOTE: height + overflowY here makes the JOIN PAGE ITSELF scrollable
   const page = {
-    height: "100vh",
-    width: "100vw",
+    minHeight: "100vh",
+    width: "100%",
     overflowY: "auto",
+    overflowX: "hidden",
     background: "linear-gradient(180deg, #ffffff 0%, #f7fdf8 100%)",
     display: "grid",
     placeItems: "start center",
     fontFamily: "Poppins, Arial, sans-serif",
     padding: 24,
+    boxSizing: "border-box",
   };
   const container = { width: "min(1100px, 96vw)" };
   const title = {
