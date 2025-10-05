@@ -59,6 +59,81 @@
       },
       "createdAt": "2025-10-05T02:03:14.014Z",
       "updatedAt": "2025-10-05T02:03:14.014Z"
+    },
+    {
+      "id": "mgd2b45bu0ek36wgshk",
+      "name": "saf",
+      "phone": "2313131313",
+      "skillLevel": "beginner",
+      "selectedSport": "table-tennis",
+      "preferences": {
+        "favoriteSports": [
+          "table-tennis"
+        ],
+        "skillLevel": "beginner"
+      },
+      "createdAt": "2025-10-05T02:07:45.599Z",
+      "updatedAt": "2025-10-05T02:07:45.599Z"
+    },
+    {
+      "id": "mgd2cze7rk4iup23o4",
+      "name": "dadadf",
+      "phone": "2313131313",
+      "skillLevel": "beginner",
+      "selectedSport": "table-tennis",
+      "preferences": {
+        "favoriteSports": [
+          "table-tennis"
+        ],
+        "skillLevel": "beginner"
+      },
+      "createdAt": "2025-10-05T02:09:12.751Z",
+      "updatedAt": "2025-10-05T02:09:12.751Z"
+    },
+    {
+      "id": "mgd2e9wwfztu9kwtsmh",
+      "name": "dfdfd",
+      "phone": "2313131313",
+      "skillLevel": "beginner",
+      "selectedSport": "handball",
+      "preferences": {
+        "favoriteSports": [
+          "handball"
+        ],
+        "skillLevel": "beginner"
+      },
+      "createdAt": "2025-10-05T02:10:13.040Z",
+      "updatedAt": "2025-10-05T02:10:13.040Z"
+    },
+    {
+      "id": "mgd2etqtazdwzxennbi",
+      "name": "Bilal Ahmed",
+      "phone": "2313131313",
+      "skillLevel": "intermediate",
+      "selectedSport": "pickleball",
+      "preferences": {
+        "favoriteSports": [
+          "pickleball"
+        ],
+        "skillLevel": "intermediate"
+      },
+      "createdAt": "2025-10-05T02:10:38.741Z",
+      "updatedAt": "2025-10-05T02:10:38.741Z"
+    },
+    {
+      "id": "mgd2folfqe8j4zhj0gn",
+      "name": "dfsfs",
+      "phone": "2313134434",
+      "skillLevel": "intermediate",
+      "selectedSport": "pickleball",
+      "preferences": {
+        "favoriteSports": [
+          "pickleball"
+        ],
+        "skillLevel": "intermediate"
+      },
+      "createdAt": "2025-10-05T02:11:18.723Z",
+      "updatedAt": "2025-10-05T02:11:18.723Z"
     }
   ],
   "games": [
@@ -82,9 +157,8 @@
       "updatedAt": "2025-10-05T02:03:19.696Z",
       "status": "open"
     },
-
     {
-     "id": "mgd25ez40m5725gm13t9",
+      "id": "mgd25ez40m5725gm13t9",
       "title": "Handball — Game",
       "description": "Bring your own gear. All levels welcome.",
       "sport": "handball",
@@ -99,7 +173,79 @@
       "players": [],
       "createdAt": "2025-10-05T02:03:19.696Z",
       "updatedAt": "2025-10-05T02:03:19.696Z",
-      "status": "open"   
+      "status": "open"
+    },
+    {
+      "id": "mgd2b7rc88s5srphpaj",
+      "title": "Table Tennis — Game",
+      "description": "Bring your own gear. All levels welcome.",
+      "sport": "table-tennis",
+      "location": "Indigo Lot 082, 529, 9 Avenue SW, Downtown Commercial Core, Calgary, Alberta, T2P 1G1, Canada",
+      "date": "2025-10-05",
+      "time": "02:52 AM",
+      "maxPlayers": 4,
+      "skillLevel": "Lobby",
+      "contactInfo": "2313131313",
+      "hostId": "mgd2b45bu0ek36wgshk",
+      "hostName": "saf",
+      "lat": 51.0447,
+      "lng": -114.0719,
+      "players": [
+        {
+          "userId": "mgd2cze7rk4iup23o4",
+          "playerName": "dadadf",
+          "joinedAt": "2025-10-05T02:09:19.708Z"
+        }
+      ],
+      "createdAt": "2025-10-05T02:07:50.280Z",
+      "updatedAt": "2025-10-05T02:09:19.708Z",
+      "status": "open"
+    },
+    {
+      "id": "mgd2dla5hzdk6zeue3p",
+      "title": "mid ball up",
+      "description": "Bring your own gear. All levels welcome.",
+      "sport": "table-tennis",
+      "location": "8, Holly Street NW, Highwood, Calgary, Alberta, T2K 3H8, Canada",
+      "date": "2025-10-05",
+      "time": "02:54 AM",
+      "maxPlayers": 4,
+      "skillLevel": "Lobby",
+      "contactInfo": "2313131313",
+      "hostId": "mgd2cze7rk4iup23o4",
+      "hostName": "dadadf",
+      "lat": 51.09083472500682,
+      "lng": -114.08648943293885,
+      "players": [],
+      "createdAt": "2025-10-05T02:09:41.117Z",
+      "updatedAt": "2025-10-05T02:09:41.117Z",
+      "status": "open"
+    },
+    {
+      "id": "mgd2f2j67j2emtqkycg",
+      "title": "test123",
+      "description": "Bring your own gear. All levels welcome.",
+      "sport": "pickleball",
+      "location": "45 Street SW, Wildwood, Calgary, Alberta, T3C 3C8, Canada",
+      "date": "2025-10-05",
+      "time": "02:55 AM",
+      "maxPlayers": 4,
+      "skillLevel": "Lobby",
+      "contactInfo": "2313131313",
+      "hostId": "mgd2etqtazdwzxennbi",
+      "hostName": "Bilal Ahmed",
+      "lat": 51.053487328279274,
+      "lng": -114.15238501867738,
+      "players": [
+        {
+          "userId": "mgd2folfqe8j4zhj0gn",
+          "playerName": "dfsfs",
+          "joinedAt": "2025-10-05T02:11:28.838Z"
+        }
+      ],
+      "createdAt": "2025-10-05T02:10:50.130Z",
+      "updatedAt": "2025-10-05T02:11:28.838Z",
+      "status": "open"
     }
   ],
   "sports": [
@@ -107,5 +253,5 @@
     "handball",
     "table-tennis"
   ],
-  "lastUpdated": "2025-10-05T02:03:19.696Z"
+  "lastUpdated": "2025-10-05T02:11:28.838Z"
 }
