@@ -6,57 +6,89 @@ export default function JoinGames() {
   const { sportName } = useParams();
   const navigate = useNavigate();
 
+  // ---- brand palette (matches your existing UI) ----
   const brand = {
-    green: "#16a34a", green2: "#22c55e", dark: "#14532d", muted: "#6b7280",
-    border: "rgba(0,0,0,0.08)", chipBg: "rgba(34, 197, 94, 0.08)",
-    chipBr: "rgba(34, 197, 94, 0.25)", ring: "rgba(34, 197, 94, 0.35)",
+    green: "#16a34a",
+    green2: "#22c55e",
+    dark: "#14532d",
+    muted: "#6b7280",
+    border: "rgba(0,0,0,0.08)",
+    chipBg: "rgba(34,197,94,0.08)",
+    chipBr: "rgba(34,197,94,0.25)",
+    ring: "rgba(34,197,94,0.35)",
   };
 
-  const LS_PLAYERS_KEY = "joinedGames_players_v1";  // { [id]: { players } }
+  // ---- localStorage keys ----
+  const LS_PLAYERS_KEY = "joinedGames_players_v1";   // { [id]: players }
   const LS_JOINED_IDS_KEY = "joinedGames_myJoins_v1"; // string[]
-  const LS_HOSTED_KEY = "hostedGames_v1";
+  const LS_HOSTED_KEY = "hostedGames_v1";            // your HostGame list
 
+  // ---- seed (fallback) ----
   const seedGames = useMemo(
-    () =>
-      Array.from({ length: 6 }, (_, i) => ({
-        id: crypto.randomUUID(),
-        name: `${formatSport(sportName)} — Game ${i + 1}`,
-        mode: "Lobby",
-        tags: [formatSport(sportName).toLowerCase(), "casual", "game"],
-        players: 0,
-        maxPlayers: 4,
-        when: sampleStartTime(i),
-        location: ["City Sport Centre", "Community Gym", "North Rec Hall"][i % 3],
-        notes:
-          i % 2 === 0
-            ? "Bring your own paddle/ball. Casual pace, all levels welcome."
-            : "We’ll do quick rotations so everyone gets equal playtime.",
-      })),
+    () => [
+      {
+        id: "g-1",
+        name: "Morning Pickup",
+        sport: sportName,
+        mode: "Casual",
+        players: 3,
+        maxPlayers: 6,
+        location: "MRU Gym",
+        time: "Today 9:30 AM",
+        tags: ["friendly", "beginner"],
+        notes: "All levels welcome. Bring water.",
+      },
+      {
+        id: "g-2",
+        name: "After-Work Run",
+        sport: sportName,
+        mode: "Competitive",
+        players: 5,
+        maxPlayers: 8,
+        location: "YMCA",
+        time: "Today 6:00 PM",
+        tags: ["intermediate"],
+        notes: "We start on time.",
+      },
+      {
+        id: "g-3",
+        name: "Weekend Mix",
+        sport: sportName,
+        mode: "Casual",
+        players: 2,
+        maxPlayers: 10,
+        location: "Community Centre",
+        time: "Sat 2:00 PM",
+        tags: ["open", "drop-in"],
+        notes: "Family friendly.",
+      },
+    ],
     [sportName]
   );
 
+  // ---- state ----
   const [games, setGames] = useState(seedGames);
   const [myJoinedIds, setMyJoinedIds] = useState([]);
   const [q, setQ] = useState("");
   const [justJoinedId, setJustJoinedId] = useState(null);
   const [openModalGame, setOpenModalGame] = useState(null);
 
-  // load hosted games and merge (for this sport)
+  // merge in hosted games for this sport (if any)
   useEffect(() => {
     try {
       const raw = localStorage.getItem(LS_HOSTED_KEY);
       const hosted = raw ? JSON.parse(raw) : [];
-      const hostedForSport = hosted.filter(g => g.sport === sportName);
-      setGames(prev => {
-        const ids = new Set(prev.map(x => x.id));
-        const merged = [...hostedForSport.filter(x => !ids.has(x.id)), ...prev];
-        return merged;
+      const hostedForSport = hosted.filter((g) => g.sport === sportName);
+      setGames((prev) => {
+        const ids = new Set(prev.map((x) => x.id));
+        // hosted first so newest hosted appear on top
+        return [...hostedForSport.filter((x) => !ids.has(x.id)), ...prev];
       });
     } catch {}
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sportName]);
 
-  // load joined counts & my joined list
+  // restore joined player counts + my joined ids
   useEffect(() => {
     try {
       const playersRaw = localStorage.getItem(LS_PLAYERS_KEY);
@@ -64,133 +96,326 @@ export default function JoinGames() {
       const savedPlayers = playersRaw ? JSON.parse(playersRaw) : {};
       const savedJoined = joinedRaw ? JSON.parse(joinedRaw) : [];
 
-      setGames(g =>
-        g.map(x => ({ ...x, players: savedPlayers[x.id]?.players ?? x.players }))
+      setGames((g) =>
+        g.map((x) =>
+          typeof savedPlayers[x.id] === "number"
+            ? { ...x, players: savedPlayers[x.id] }
+            : x
+        )
       );
       setMyJoinedIds(savedJoined);
     } catch {}
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // persist players
+  // persist players + myJoinedIds whenever they change
   useEffect(() => {
-    const toSave = games.reduce((acc, g) => {
-      acc[g.id] = { players: g.players };
-      return acc;
-    }, {});
-    try { localStorage.setItem(LS_PLAYERS_KEY, JSON.stringify(toSave)); } catch {}
+    const playersObj = {};
+    games.forEach((g) => (playersObj[g.id] = g.players));
+    localStorage.setItem(LS_PLAYERS_KEY, JSON.stringify(playersObj));
   }, [games]);
 
-  // persist my joined list
   useEffect(() => {
-    try { localStorage.setItem(LS_JOINED_IDS_KEY, JSON.stringify(myJoinedIds)); } catch {}
+    localStorage.setItem(LS_JOINED_IDS_KEY, JSON.stringify(myJoinedIds));
   }, [myJoinedIds]);
 
-  function formatSport(s) {
-    if (!s) return "Sport";
-    return s.split("-").map(t => t[0]?.toUpperCase() + t.slice(1)).join(" ");
-  }
-  function sampleStartTime(i) {
-    const now = new Date();
-    now.setMinutes(now.getMinutes() + 30 + i * 15);
-    return now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-  }
-
-  const filtered = useMemo(() => {
-    const t = q.trim().toLowerCase();
-    if (!t) return games;
-    return games.filter(
-      g =>
-        g.name.toLowerCase().includes(t) ||
-        g.mode.toLowerCase().includes(t) ||
-        g.location.toLowerCase().includes(t) ||
-        g.tags.some(tag => tag.toLowerCase().includes(t))
-    );
-  }, [q, games]);
+  // ---- helpers ----
+  const formatSport = (s) =>
+    (s || "Sport")
+      .split("-")
+      .map((t) => t.charAt(0).toUpperCase() + t.slice(1))
+      .join(" ");
 
   const hasJoined = (id) => myJoinedIds.includes(id);
 
+  // join a game
   function joinGame(id) {
     if (hasJoined(id)) {
       setJustJoinedId(id);
       setTimeout(() => setJustJoinedId(null), 700);
       return;
     }
-    setGames(prev =>
-      prev.map(g => {
+    setGames((prev) =>
+      prev.map((g) => {
         if (g.id !== id) return g;
         if (g.players >= g.maxPlayers) return g;
         return { ...g, players: g.players + 1 };
       })
     );
-    setMyJoinedIds(prev => [...prev, id]);
+    setMyJoinedIds((prev) => [...prev, id]);
     setJustJoinedId(id);
     setTimeout(() => setJustJoinedId(null), 800);
   }
 
-  function shuffle() {
-    setGames(prev => [...prev].sort(() => Math.random() - 0.5));
-  }
-  function details(g) {
-    setOpenModalGame(g);
+  // *** NEW: leave/unjoin a game ***
+  function leaveGame(id) {
+    if (!hasJoined(id)) return;
+    setGames((prev) =>
+      prev.map((g) => {
+        if (g.id !== id) return g;
+        return { ...g, players: Math.max(0, g.players - 1) };
+      })
+    );
+    setMyJoinedIds((prev) => prev.filter((x) => x !== id));
   }
 
-  // styles
-  const page = { minHeight: "100vh", width: "100vw", background: "linear-gradient(180deg, #ffffff 0%, #f7fdf8 100%)", display: "grid", placeItems: "center", fontFamily: "Poppins, Arial, sans-serif", padding: 24 };
-  const container = { width: "min(980px, 100%)" };
-  const title = { fontSize: "clamp(28px, 4vw, 44px)", margin: "0 0 8px", color: brand.dark, letterSpacing: ".5px", lineHeight: 1.15 };
-  const subtitle = { color: brand.muted, margin: "0 0 20px" };
-  const toolbar = { display: "flex", alignItems: "center", gap: 10, margin: "22px 0 16px" };
-  const search = { flex: 1, display: "flex", gap: 8, background: "#f3f4f6", border: "1px solid #e5e7eb", padding: "8px 10px", borderRadius: 12 };
-  const searchInput = { flex: 1, background: "transparent", border: 0, outline: "none", color: "#111827", fontSize: 14 };
-  const ghostBtn = { appearance: "none", border: "1px dashed rgba(16,185,129,0.35)", cursor: "pointer", padding: "10px 12px", borderRadius: 10, fontWeight: 600, fontSize: 14, background: "transparent", color: brand.muted };
-  const grid = { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 16 };
-  const card = { background: "#ffffff", border: `1px solid ${brand.border}`, borderRadius: 16, padding: 16, boxShadow: "0 6px 16px rgba(0,0,0,.06)", display: "flex", flexDirection: "column", gap: 12, position: "relative" };
-  const chip = { padding: "4px 8px", borderRadius: 999, border: `1px solid ${brand.chipBr}`, background: brand.chipBg, fontSize: 12, color: brand.muted };
-  const actions = { marginTop: "auto", display: "flex", gap: 8 };
-  const primaryBtn = (disabled = false) => ({ appearance: "none", border: "none", cursor: disabled ? "not-allowed" : "pointer", padding: "10px 12px", borderRadius: 10, fontWeight: 700, fontSize: 14, background: disabled ? "#e5e7eb" : `linear-gradient(90deg, ${brand.green}, ${brand.green2})`, color: disabled ? "#9ca3af" : "#fff", boxShadow: disabled ? "none" : `0 6px 16px ${brand.ring}`, transition: "transform .08s ease, box-shadow .2s ease, filter .2s ease" });
-  const secondaryBtn = { appearance: "none", cursor: "pointer", padding: "10px 12px", borderRadius: 10, fontWeight: 700, fontSize: 14, background: "transparent", color: brand.muted, border: "1px dashed rgba(16,185,129,0.35)" };
-  const meta = { color: brand.muted, fontSize: 13, display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" };
-  const empty = { textAlign: "center", padding: "40px 12px", color: brand.muted, border: "1px dashed rgba(34,197,94,0.25)", borderRadius: 14, background: "rgba(34,197,94,0.06)", marginTop: 12 };
-  const backBtn = { marginBottom: 14, border: `1px solid ${brand.border}`, background: "#fff", color: brand.dark, borderRadius: 12, padding: "10px 14px", cursor: "pointer", boxShadow: "0 10px 30px rgba(22,163,74,0.1), 0 4px 12px rgba(0,0,0,0.05)" };
+  function shuffle() {
+    setGames((prev) => [...prev].sort(() => Math.random() - 0.5));
+  }
+
+  // search filter
+  const filtered = useMemo(() => {
+    const t = q.trim().toLowerCase();
+    if (!t) return games;
+    return games.filter(
+      (g) =>
+        g.name.toLowerCase().includes(t) ||
+        g.mode.toLowerCase().includes(t) ||
+        g.location.toLowerCase().includes(t) ||
+        g.tags.some((tag) => tag.toLowerCase().includes(t))
+    );
+  }, [q, games]);
+
+  // ---- styles ----
+  // NOTE: height + overflowY here makes the JOIN PAGE ITSELF scrollable
+  const page = {
+    height: "100vh",
+    width: "100vw",
+    overflowY: "auto",
+    background: "linear-gradient(180deg, #ffffff 0%, #f7fdf8 100%)",
+    display: "grid",
+    placeItems: "start center",
+    fontFamily: "Poppins, Arial, sans-serif",
+    padding: 24,
+  };
+  const container = { width: "min(1100px, 96vw)" };
+  const title = {
+    color: brand.green,
+    fontSize: "2.2rem",
+    fontWeight: 800,
+    letterSpacing: "-0.3px",
+    margin: "6px 0 6px",
+  };
+  const subtitle = { color: brand.muted, margin: 0 };
+  const toolbar = {
+    display: "flex",
+    gap: 10,
+    alignItems: "center",
+    justifyContent: "space-between",
+    margin: "18px 0 10px",
+    flexWrap: "wrap",
+  };
+  const search = { flex: "1 1 320px" };
+  const searchInput = {
+    width: "100%",
+    appearance: "none",
+    borderRadius: 12,
+    border: `1px solid ${brand.border}`,
+    padding: "12px 14px",
+    outline: "2px solid transparent",
+    outlineOffset: 2,
+    fontSize: 14,
+    boxShadow: "0 6px 22px rgba(0,0,0,0.06)",
+  };
+  const grid = {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
+    gap: 14,
+    paddingBottom: 40,
+  };
+  const card = {
+    border: `1px solid ${brand.border}`,
+    borderRadius: 16,
+    background: "#fff",
+    padding: 14,
+    display: "grid",
+    gap: 8,
+    boxShadow:
+      "0 10px 30px rgba(22,163,74,0.1), 0 4px 12px rgba(0,0,0,0.05)",
+  };
+  const meta = {
+    display: "flex",
+    flexWrap: "wrap",
+    gap: 8,
+    alignItems: "center",
+    color: brand.muted,
+    fontSize: 13,
+  };
+  const chip = {
+    padding: "6px 10px",
+    borderRadius: 999,
+    border: `1px solid ${brand.chipBr}`,
+    background: brand.chipBg,
+    fontSize: 12,
+    color: brand.muted,
+  };
+  const capacity = { fontWeight: 700, color: brand.dark };
+  const actions = { display: "flex", gap: 8, marginTop: 4 };
+  const primaryBtn = (disabled = false) => ({
+    appearance: "none",
+    cursor: disabled ? "not-allowed" : "pointer",
+    padding: "10px 12px",
+    borderRadius: 10,
+    fontWeight: 700,
+    fontSize: 14,
+    background: disabled ? "#f3f4f6" : brand.green,
+    color: disabled ? "#9ca3af" : "#fff",
+    border: "1px solid rgba(0,0,0,0.06)",
+    boxShadow: disabled ? "none" : "0 6px 16px rgba(34,197,94,0.35)",
+  });
+  const secondaryBtn = {
+    appearance: "none",
+    cursor: "pointer",
+    padding: "10px 12px",
+    borderRadius: 10,
+    fontWeight: 700,
+    fontSize: 14,
+    background: "#fff",
+    color: brand.dark,
+    border: `1px solid ${brand.border}`,
+  };
+  const leaveBtn = {
+    appearance: "none",
+    cursor: "pointer",
+    padding: "10px 12px",
+    borderRadius: 10,
+    fontWeight: 700,
+    fontSize: 14,
+    background: "#fff",
+    color: "#dc2626",
+    border: "1px solid rgba(220,38,38,0.35)",
+  };
+  const backBtn = {
+    marginBottom: 14,
+    border: `1px solid ${brand.border}`,
+    background: "#fff",
+    color: brand.dark,
+    borderRadius: 10,
+    padding: "10px 12px",
+    cursor: "pointer",
+    boxShadow:
+      "0 10px 30px rgba(22,163,74,0.1), 0 4px 12px rgba(0,0,0,0.05)",
+  };
+  const empty = {
+    textAlign: "center",
+    padding: "40px 12px",
+    color: brand.muted,
+    border: `1px dashed ${brand.border}`,
+    borderRadius: 14,
+    background: "rgba(34,197,94,0.06)",
+    marginTop: 12,
+  };
 
   return (
     <div style={page}>
       <div style={container}>
-        <button style={backBtn} onClick={() => navigate(`/sport/${sportName}`)}>← Back</button>
+        <button
+          style={backBtn}
+          onClick={() => navigate(`/sport/${sportName}`)}
+        >
+          ← Back
+        </button>
+
         <h1 style={title}>Available {formatSport(sportName)} Games</h1>
         <p style={subtitle}>Pick a lobby below to join.</p>
 
         <section style={toolbar} aria-label="Game controls">
           <div style={search} role="search">
-            <input style={searchInput} type="search" placeholder="Search games (e.g., Game 3, casual, Community Gym)" value={q} onChange={e => setQ(e.target.value)} aria-label="Search games" />
+            <input
+              style={searchInput}
+              type="search"
+              placeholder="Search by name, mode, location, or tag…"
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              aria-label="Search games"
+            />
           </div>
-          <button style={ghostBtn} onClick={shuffle} title="Shuffle list" aria-label="Shuffle games">Shuffle</button>
+          <button
+            style={secondaryBtn}
+            onClick={shuffle}
+            title="Shuffle list"
+            aria-label="Shuffle games"
+          >
+            Shuffle
+          </button>
         </section>
 
         {filtered.length === 0 ? (
-          <p style={empty}>No games match your search. Try another keyword.</p>
+          <p style={empty}>
+            No games match your search. Try another keyword.
+          </p>
         ) : (
           <section style={grid} aria-live="polite">
-            {filtered.map(g => {
+            {filtered.map((g) => {
               const full = g.players >= g.maxPlayers;
               const joined = hasJoined(g.id);
-              const pulsing = justJoinedId === g.id ? { outline: `2px solid ${brand.green}`, outlineOffset: 2 } : {};
+              const pulsing =
+                justJoinedId === g.id
+                  ? {
+                      outline: `2px solid ${brand.green}`,
+                      outlineOffset: 2,
+                    }
+                  : {};
               return (
-                <article key={g.id} style={{ ...card, ...pulsing }} aria-label={g.name}>
-                  <h3 style={{ margin: 0, fontSize: 18, lineHeight: 1.2, color: "#111827" }}>{g.name}</h3>
+                <article key={g.id} style={{ ...card, ...pulsing }}>
+                  <h3
+                    style={{
+                      margin: 0,
+                      fontSize: 18,
+                      lineHeight: 1.2,
+                      color: "#111827",
+                    }}
+                  >
+                    {g.name}
+                  </h3>
+
                   <div style={meta}>
                     <span style={chip}>Mode: {g.mode}</span>
-                    <span style={chip}>Capacity: {g.players}/{g.maxPlayers}</span>
-                    <span style={chip}>When: {g.when}</span>
-                    <span style={chip}>Location: {g.location}</span>
-                    <span style={chip}>Tags: {g.tags.join(" • ")}</span>
+                    <span style={chip}>{g.location}</span>
+                    <span style={chip}>{g.time}</span>
                   </div>
+
+                  <div style={meta}>
+                    <span style={capacity}>
+                      {g.players}/{g.maxPlayers}
+                    </span>
+                    <span style={{ color: brand.muted }}>&nbsp;players</span>
+                  </div>
+
+                  <div style={meta}>
+                    {g.tags.map((t) => (
+                      <span key={t} style={chip}>
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+
                   <div style={actions}>
-                    <button style={primaryBtn(full || joined)} disabled={full || joined} onClick={() => joinGame(g.id)} aria-disabled={full || joined}>
-                      {joined ? "Joined" : full ? "Full" : "Join game"}
+                    {joined ? (
+                      <button
+                        style={leaveBtn}
+                        onClick={() => leaveGame(g.id)}
+                        aria-label={`Leave ${g.name}`}
+                      >
+                        Leave game
+                      </button>
+                    ) : (
+                      <button
+                        style={primaryBtn(full)}
+                        disabled={full}
+                        onClick={() => joinGame(g.id)}
+                        aria-disabled={full}
+                      >
+                        {full ? "Full" : "Join game"}
+                      </button>
+                    )}
+
+                    <button
+                      style={secondaryBtn}
+                      onClick={() => setOpenModalGame(g)}
+                      aria-label={`View details for ${g.name}`}
+                    >
+                      Details
                     </button>
-                    <button style={secondaryBtn} onClick={() => details(g)} aria-label={`View details for ${g.name}`}>Details</button>
                   </div>
                 </article>
               );
@@ -203,7 +428,8 @@ export default function JoinGames() {
         <GameModal
           game={openModalGame}
           onClose={() => setOpenModalGame(null)}
-          onJoin={() => { joinGame(openModalGame.id); }}
+          onJoin={() => joinGame(openModalGame.id)}
+          onLeave={() => leaveGame(openModalGame.id)} // NEW
           hasJoined={hasJoined(openModalGame.id)}
           isFull={openModalGame.players >= openModalGame.maxPlayers}
           brand={brand}
@@ -213,28 +439,99 @@ export default function JoinGames() {
   );
 }
 
-function GameModal({ game, onClose, onJoin, hasJoined, isFull, brand }) {
+// ---------------- Modal ----------------
+function GameModal({ game, onClose, onJoin, onLeave, hasJoined, isFull, brand }) {
   const overlayRef = useRef(null);
   const dialogRef = useRef(null);
 
   useEffect(() => {
-    function onKey(e) { if (e.key === "Escape") onClose(); }
+    function onKey(e) {
+      if (e.key === "Escape") onClose();
+    }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [onClose]);
-  useEffect(() => { dialogRef.current?.focus(); }, []);
 
-  const overlay = { position: "fixed", inset: 0, background: "rgba(0,0,0,0.45)", display: "grid", placeItems: "center", padding: 16, zIndex: 1000 };
-  const card = { width: "min(560px, 96vw)", background: "#fff", borderRadius: 18, border: `1px solid rgba(0,0,0,0.08)`, boxShadow: "0 24px 64px rgba(0,0,0,.25)", outline: "none" };
-  const header = { padding: "18px 20px 10px", borderBottom: "1px solid rgba(0,0,0,0.08)" };
+  useEffect(() => {
+    dialogRef.current?.focus();
+  }, []);
+
+  const overlay = {
+    position: "fixed",
+    inset: 0,
+    background: "rgba(0,0,0,0.45)",
+    display: "grid",
+    placeItems: "center",
+    padding: 16,
+    zIndex: 1000,
+  };
+  const card = {
+    width: "min(560px, 96vw)",
+    background: "#fff",
+    borderRadius: 16,
+    border: `1px solid ${brand.border}`,
+    outline: "none",
+    boxShadow: "0 24px 64px rgba(0,0,0,.25)",
+  };
+  const header = {
+    padding: "18px 20px 10px",
+    borderBottom: "1px solid rgba(0,0,0,0.08)",
+  };
   const title = { margin: 0, fontSize: 20, color: "#111827", lineHeight: 1.2 };
   const body = { padding: 20, display: "grid", gap: 12 };
-  const row = { display: "flex", gap: 12, flexWrap: "wrap", alignItems: "center" };
-  const chip = { padding: "6px 10px", borderRadius: 999, border: `1px solid rgba(34,197,94,0.25)`, background: "rgba(34,197,94,0.08)", fontSize: 12, color: "#6b7280" };
-  const note = { color: "#6b7280", lineHeight: 1.5, fontSize: 14 };
-  const footer = { padding: 16, borderTop: "1px solid rgba(0,0,0,0.08)", display: "flex", justifyContent: "flex-end", gap: 10 };
-  const primaryBtn = (disabled = false) => ({ appearance: "none", border: "none", cursor: disabled ? "not-allowed" : "pointer", padding: "10px 14px", borderRadius: 10, fontWeight: 700, fontSize: 14, background: disabled ? "#e5e7eb" : "linear-gradient(90deg, #16a34a, #22c55e)", color: disabled ? "#9ca3af" : "#fff", boxShadow: disabled ? "none" : "0 6px 16px rgba(34,197,94,0.35)" });
-  const ghostBtn = { appearance: "none", border: "1px solid rgba(0,0,0,0.08)", background: "#fff", color: "#14532d", borderRadius: 10, padding: "10px 14px", cursor: "pointer" };
+  const row = {
+    display: "flex",
+    gap: 12,
+    flexWrap: "wrap",
+    alignItems: "center",
+  };
+  const chip = {
+    padding: "6px 10px",
+    borderRadius: 999,
+    border: `1px solid ${brand.chipBr}`,
+    background: brand.chipBg,
+    fontSize: 12,
+    color: brand.muted,
+  };
+  const note = { color: brand.muted, lineHeight: 1.5, fontSize: 14 };
+  const footer = {
+    padding: 16,
+    borderTop: "1px solid rgba(0,0,0,0.08)",
+    display: "flex",
+    justifyContent: "flex-end",
+    gap: 10,
+  };
+  const primaryBtn = (disabled = false) => ({
+    appearance: "none",
+    cursor: disabled ? "not-allowed" : "pointer",
+    padding: "10px 14px",
+    borderRadius: 10,
+    fontWeight: 700,
+    fontSize: 14,
+    background: disabled ? "#f3f4f6" : brand.green,
+    color: disabled ? "#9ca3af" : "#fff",
+    border: "1px solid rgba(0,0,0,0.06)",
+    boxShadow: disabled ? "none" : "0 6px 16px rgba(34,197,94,0.35)",
+  });
+  const ghostBtn = {
+    appearance: "none",
+    border: "1px solid rgba(0,0,0,0.08)",
+    background: "#fff",
+    color: brand.dark,
+    borderRadius: 10,
+    padding: "10px 14px",
+    cursor: "pointer",
+  };
+  const leaveBtn = {
+    appearance: "none",
+    border: "1px solid rgba(220,38,38,0.35)",
+    background: "#fff",
+    color: "#dc2626",
+    borderRadius: 10,
+    padding: "10px 14px",
+    cursor: "pointer",
+    fontWeight: 700,
+  };
 
   return (
     <div
@@ -243,25 +540,51 @@ function GameModal({ game, onClose, onJoin, hasJoined, isFull, brand }) {
       role="dialog"
       aria-modal="true"
       aria-label={`Details for ${game.name}`}
-      onMouseDown={e => { if (e.target === overlayRef.current) onClose(); }}
+      onMouseDown={(e) => {
+        if (e.target === overlayRef.current) onClose();
+      }}
     >
       <div ref={dialogRef} style={card} tabIndex={-1}>
-        <div style={header}><h3 style={title}>{game.name}</h3></div>
+        <div style={header}>
+          <h3 style={title}>{game.name}</h3>
+        </div>
+
         <div style={body}>
           <div style={row}>
             <span style={chip}>Mode: {game.mode}</span>
-            <span style={chip}>Players: {game.players}/{game.maxPlayers}</span>
-            <span style={chip}>When: {game.when}</span>
-            <span style={chip}>Location: {game.location}</span>
+            <span style={chip}>{game.location}</span>
+            <span style={chip}>{game.time}</span>
           </div>
-          <div style={row}><span style={chip}>Tags: {game.tags.join(" • ")}</span></div>
+          <div style={row}>
+            <span style={chip}>
+              Capacity: {game.players}/{game.maxPlayers}
+            </span>
+          </div>
+          <div style={row}>
+            <span style={chip}>Tags: {game.tags.join(" • ")}</span>
+          </div>
           <p style={note}>{game.notes}</p>
         </div>
+
         <div style={footer}>
-          <button style={ghostBtn} onClick={onClose}>Close</button>
-          <button style={primaryBtn(isFull || hasJoined)} disabled={isFull || hasJoined} onClick={onJoin} aria-disabled={isFull || hasJoined}>
-            {hasJoined ? "Joined" : isFull ? "Full" : "Join game"}
+          <button style={ghostBtn} onClick={onClose}>
+            Close
           </button>
+
+          {hasJoined ? (
+            <button style={leaveBtn} onClick={onLeave}>
+              Leave game
+            </button>
+          ) : (
+            <button
+              style={primaryBtn(isFull)}
+              disabled={isFull}
+              onClick={onJoin}
+              aria-disabled={isFull}
+            >
+              {isFull ? "Full" : "Join game"}
+            </button>
+          )}
         </div>
       </div>
     </div>
