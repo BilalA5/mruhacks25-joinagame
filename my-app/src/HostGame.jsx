@@ -217,6 +217,15 @@ function HostGameInner() {
       // Get current user from localStorage
       const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
       
+      // Validate user data
+      if (!currentUser.id || !currentUser.name) {
+        setToastMessage('Please create a profile first before hosting a game.');
+        setShowToast(true);
+        setTimeout(() => setShowToast(false), 3000);
+        navigate('/profile');
+        return;
+      }
+      
       const gameData = {
         title: name || `${formatSport(sport)} — Game`,
         description: notes,
@@ -234,7 +243,10 @@ function HostGameInner() {
         players: []
       };
 
-      await apiClient.createGame(gameData);
+      console.log('Creating game with data:', gameData);
+      const createdGame = await apiClient.createGame(gameData);
+      console.log('Game created successfully:', createdGame);
+      
       setToastMessage('Game created successfully!');
       setShowToast(true);
       setTimeout(() => {
@@ -244,7 +256,8 @@ function HostGameInner() {
       
     } catch (error) {
       console.error('Failed to create game:', error);
-      setToastMessage('Failed to create game. Please try again.');
+      const errorMessage = error.message || 'Failed to create game. Please try again.';
+      setToastMessage(`Error: ${errorMessage}`);
       setShowToast(true);
       setTimeout(() => setShowToast(false), 3000);
     }

@@ -32,10 +32,27 @@ async function initializeDataFile() {
 async function readData() {
   try {
     const data = await fs.readFile(DATA_FILE, 'utf8');
-    return JSON.parse(data);
+    const parsed = JSON.parse(data);
+    
+    // Ensure the data structure is valid
+    if (!parsed.users || !parsed.games || !parsed.sports) {
+      console.log('Invalid data structure, reinitializing...');
+      await initializeDataFile();
+      return await readData();
+    }
+    
+    return parsed;
   } catch (error) {
     console.error('Error reading data file:', error);
-    throw new Error('Failed to read data');
+    
+    // If file doesn't exist or is corrupted, recreate it
+    if (error.code === 'ENOENT' || error instanceof SyntaxError) {
+      console.log('Data file missing or corrupted, creating new one...');
+      await initializeDataFile();
+      return await readData();
+    }
+    
+    throw new Error(`Failed to read data: ${error.message}`);
   }
 }
 
@@ -123,6 +140,17 @@ app.post('/api/users', async (req, res) => {
 // Create a new game
 app.post('/api/games', async (req, res) => {
   try {
+    console.log('Creating new game with data:', req.body);
+    
+    // Validate required fields
+    const { title, sport, location, hostId, hostName } = req.body;
+    if (!title || !sport || !location || !hostId || !hostName) {
+      console.error('Missing required fields:', { title, sport, location, hostId, hostName });
+      return res.status(400).json({ 
+        error: 'Missing required fields: title, sport, location, hostId, and hostName are required' 
+      });
+    }
+    
     const data = await readData();
     const newGame = {
       id: generateId(),
@@ -134,12 +162,19 @@ app.post('/api/games', async (req, res) => {
       status: 'open' // open, full, completed, cancelled
     };
     
+    console.log('Generated game:', newGame);
+    
     data.games.push(newGame);
     await writeData(data);
     
+    console.log('Game saved successfully with ID:', newGame.id);
     res.status(201).json(newGame);
   } catch (error) {
-    res.status(500).json({ error: 'Failed to create game' });
+    console.error('Error creating game:', error);
+    res.status(500).json({ 
+      error: 'Failed to create game',
+      details: error.message 
+    });
   }
 });
 

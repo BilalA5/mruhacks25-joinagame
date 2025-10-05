@@ -17,15 +17,33 @@ class ApiClient {
     };
 
     try {
+      console.log(`Making API request to: ${url}`, config);
       const response = await fetch(url, config);
       
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorText = await response.text();
+        let errorData;
+        try {
+          errorData = JSON.parse(errorText);
+        } catch {
+          errorData = { message: errorText };
+        }
+        
+        console.error(`API request failed: ${response.status}`, errorData);
+        throw new Error(errorData.error || errorData.message || `HTTP error! status: ${response.status}`);
       }
       
-      return await response.json();
+      const result = await response.json();
+      console.log(`API request successful:`, result);
+      return result;
     } catch (error) {
       console.error('API request failed:', error);
+      
+      // Check if it's a network error
+      if (error.name === 'TypeError' && error.message.includes('fetch')) {
+        throw new Error('Unable to connect to server. Please make sure the backend is running on port 3001.');
+      }
+      
       throw error;
     }
   }
