@@ -13,8 +13,8 @@ function WobbleCard({ children, onClick }) {
 
   const handleMouseMove = (e) => {
     const rect = e.currentTarget.getBoundingClientRect();
-    const x = (e.clientX - rect.left - rect.width / 2) / 10;
-    const y = (e.clientY - rect.top - rect.height / 2) / 10;
+    const x = (e.clientX - rect.left - rect.width / 2) / 8;
+    const y = (e.clientY - rect.top - rect.height / 2) / 8;
     setMousePosition({ x, y });
   };
 
@@ -33,11 +33,13 @@ function WobbleCard({ children, onClick }) {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        boxShadow: '0 10px 30px rgba(22,163,74,0.1), 0 4px 12px rgba(0,0,0,0.05)',
+        boxShadow: mousePosition.x !== 0 || mousePosition.y !== 0 
+          ? '0 20px 40px rgba(22,163,74,0.25), 0 8px 16px rgba(0,0,0,0.1)' 
+          : '0 10px 30px rgba(22,163,74,0.1), 0 4px 12px rgba(0,0,0,0.05)',
         transition: 'all 0.35s ease',
         cursor: 'pointer',
         border: '1px solid #e5e7eb',
-        transform: `translate3d(${mousePosition.x}px, ${mousePosition.y}px, 0) scale(1.05)`,
+        transform: `translate3d(${mousePosition.x}px, ${mousePosition.y}px, 0) scale(1.08)`,
       }}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
