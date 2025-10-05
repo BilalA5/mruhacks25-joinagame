@@ -2,7 +2,8 @@ import './App.css'
 import { Routes, Route, useNavigate, useParams } from 'react-router-dom'
 import HostOrJoin from './hostOrJoin.jsx'
 import UserProfile from './userProfile.jsx'
-import JoinGames from './JoinGames.jsx'   // <-- NEW
+import JoinGames from './JoinGames.jsx' 
+import HostGame from "./HostGame.jsx";
 
 function SportPage() {
   const { sportName } = useParams();
@@ -144,6 +145,8 @@ function App() {
       <Route path="/sport/:sportName" element={<SportPage />} />
       <Route path="/join/:sportName" element={<JoinGames />} />  {/* <-- NEW */}
       <Route path="/profile" element={<UserProfilePage />} />
+      <Route path="/host/:sportName" element={<HostGame />} />
+
     </Routes>
   );
 }
