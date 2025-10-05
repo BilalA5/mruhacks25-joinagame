@@ -1,10 +1,56 @@
 {
-  "users": [],
+  "users": [
+    {
+      "id": "mgd12j2ez6ka1ct9qgl",
+      "name": "Shayabn",
+      "phone": "1231231313",
+      "skillLevel": "expert",
+      "selectedSport": "handball",
+      "preferences": {
+        "favoriteSports": [
+          "handball"
+        ],
+        "skillLevel": "expert"
+      },
+      "createdAt": "2025-10-05T01:33:05.414Z",
+      "updatedAt": "2025-10-05T01:33:05.414Z"
+    },
+    {
+      "id": "mgd16udhojsky0a53ot",
+      "name": "Shayan",
+      "phone": "1231232131",
+      "skillLevel": "advanced",
+      "selectedSport": "pickleball",
+      "preferences": {
+        "favoriteSports": [
+          "pickleball"
+        ],
+        "skillLevel": "advanced"
+      },
+      "createdAt": "2025-10-05T01:36:26.693Z",
+      "updatedAt": "2025-10-05T01:36:26.693Z"
+    },
+    {
+      "id": "mgd18ruqiyf32q3lojq",
+      "name": "ewdef",
+      "phone": "1231231231",
+      "skillLevel": "expert",
+      "selectedSport": "pickleball",
+      "preferences": {
+        "favoriteSports": [
+          "pickleball"
+        ],
+        "skillLevel": "expert"
+      },
+      "createdAt": "2025-10-05T01:37:56.738Z",
+      "updatedAt": "2025-10-05T01:37:56.738Z"
+    }
+  ],
   "games": [],
   "sports": [
     "pickleball",
-    "handball", 
+    "handball",
     "table-tennis"
   ],
-  "lastUpdated": "2025-01-04T00:00:00.000Z"
+  "lastUpdated": "2025-10-05T01:37:56.738Z"
 }
