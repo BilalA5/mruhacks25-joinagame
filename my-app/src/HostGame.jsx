@@ -1,333 +1,440 @@
-// src/hostGame.jsx
-import React, { useEffect, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import React, { useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import apiClient from './utils/api';
 
-/* ---------- Simple ErrorBoundary to avoid white screens ---------- */
-class ErrorBoundary extends React.Component {
-  constructor(p){ super(p); this.state={hasError:false}; }
-  static getDerivedStateFromError(){ return {hasError:true}; }
-  componentDidCatch(err, info){ console.error("HostGame error:", err, info); }
-  render(){ return this.state.hasError ? (
-    <div style={{padding:24,fontFamily:"Poppins,Arial,sans-serif"}}>
-      <h3>Something went wrong in Host Game.</h3>
-      <p>Check the console for details.</p>
-    </div>
-  ) : this.props.children; }
-}
-
-/* ---------- Constants ---------- */
-const LS_HOSTED_KEY = "hostedGames_v1";
-const DEFAULT_CENTER = { lat: 51.0447, lng: -114.0719 }; // Calgary
-
-/* ---------- Loader: ensure Leaflet CSS & JS are ready ---------- */
-function useLeafletReady() {
-  const [ready, setReady] = useState(!!window.L);
-
-  useEffect(() => {
-    if (window.L) { setReady(true); return; }
-
-    // CSS
-    const cssId = "leaflet-css";
-    if (!document.getElementById(cssId)) {
-      const link = document.createElement("link");
-      link.id = cssId; link.rel = "stylesheet";
-      link.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
-      document.head.appendChild(link);
-    }
-
-    // JS
-    const jsId = "leaflet-js";
-    if (!document.getElementById(jsId)) {
-      const s = document.createElement("script");
-      s.id = jsId;
-      s.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
-      s.async = true; s.defer = true;
-      s.onload = () => setReady(true);
-      s.onerror = () => console.error("Leaflet failed to load");
-      document.body.appendChild(s);
-    } else {
-      // Already requested; poll until available
-      const poll = setInterval(() => {
-        if (window.L) { setReady(true); clearInterval(poll); }
-      }, 100);
-      return () => clearInterval(poll);
-    }
-  }, []);
-
-  return ready;
-}
-
-/* ---------- Helpers ---------- */
-function formatSport(s) {
-  if (!s) return "Sport";
-  return s.split("-").map(t => t[0]?.toUpperCase() + t.slice(1)).join(" ");
-}
-function uuid() {
-  return (crypto?.randomUUID && crypto.randomUUID()) || Math.random().toString(36).slice(2);
-}
-async function reverseGeocode(lat, lon) {
-  try {
-    const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`, {
-      headers: { "Accept": "application/json" },
-    });
-    const j = await res.json();
-    return j.display_name;
-  } catch { return null; }
-}
-async function searchAddress(q) {
-  try {
-    const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=1`, {
-    headers: { "Accept": "application/json" }});
-    const j = await res.json();
-    if (!j?.length) return null;
-    return { lat: parseFloat(j[0].lat), lng: parseFloat(j[0].lon), label: j[0].display_name };
-  } catch { return null; }
-}
-
-/* ---------- Main component ---------- */
-function HostGameInner() {
-  const { sportName } = useParams();
+export default function HostGame() {
   const navigate = useNavigate();
-  const leafletReady = useLeafletReady();
-
-  // brand colors
-  const brand = {
-    green:"#16a34a", green2:"#22c55e", dark:"#14532d",
-    muted:"#6b7280", border:"rgba(0,0,0,0.08)", ring:"rgba(34,197,94,0.35)",
-  };
-
-  // form state
-  const [name, setName] = useState(`${formatSport(sportName)} — Game`);
-  const [mode, setMode] = useState("Lobby");
-  const [maxPlayers, setMaxPlayers] = useState(4);
-  const [when, setWhen] = useState(() => {
-    const now = new Date(); now.setMinutes(now.getMinutes() + 45);
-    return now.toISOString().slice(0, 16);
+  const { sport } = useParams();
+  const [showSuccessAlert, setShowSuccessAlert] = useState(false);
+  
+  const [formData, setFormData] = useState({
+    title: '',
+    description: '',
+    location: '',
+    date: '',
+    time: '',
+    maxPlayers: 4,
+    skillLevel: 'beginner',
+    contactInfo: ''
   });
-  const [tags, setTags] = useState(`${formatSport(sportName).toLowerCase()}, casual, game`);
-  const [notes, setNotes] = useState("Bring your own gear. All levels welcome.");
-  const [locationText, setLocationText] = useState("");
-  const [coords, setCoords] = useState(null);
 
-  // map refs
-  const mapElRef = useRef(null);
-  const mapRef = useRef(null);
-  const markerRef = useRef(null);
-  const searchInputRef = useRef(null);
+  const [validationErrors, setValidationErrors] = useState({});
+  const [isFormValid, setIsFormValid] = useState(false);
 
-  // init Leaflet once it's ready
-  useEffect(() => {
-    if (!leafletReady) return;
-    if (!mapElRef.current) return;
-    if (mapRef.current) return; // already init
+  const sportDisplay = sport ? sport.split("-").map(s => s[0].toUpperCase() + s.slice(1)).join(" ") : "Sport";
 
-    const L = window.L;
-    if (!L) return; // extra guard
-
-    const map = L.map(mapElRef.current).setView([DEFAULT_CENTER.lat, DEFAULT_CENTER.lng], 12);
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      maxZoom: 19, attribution: "&copy; OpenStreetMap contributors",
-    }).addTo(map);
-
-    const marker = L.marker([DEFAULT_CENTER.lat, DEFAULT_CENTER.lng], { draggable: true }).addTo(map);
-
-    mapRef.current = map;
-    markerRef.current = marker;
-    setCoords(DEFAULT_CENTER);
-
-    // prefill address
-    reverseGeocode(DEFAULT_CENTER.lat, DEFAULT_CENTER.lng)
-      .then(addr => setLocationText(addr || `${DEFAULT_CENTER.lat.toFixed(6)}, ${DEFAULT_CENTER.lng.toFixed(6)}`));
-
-    // click → move
-    map.on("click", async (e) => {
-      const pos = { lat: e.latlng.lat, lng: e.latlng.lng };
-      marker.setLatLng([pos.lat, pos.lng]);
-      setCoords(pos);
-      const addr = await reverseGeocode(pos.lat, pos.lng);
-      setLocationText(addr || `${pos.lat.toFixed(6)}, ${pos.lng.toFixed(6)}`);
-    });
-
-    // drag → move
-    marker.on("dragend", async () => {
-      const ll = marker.getLatLng();
-      const pos = { lat: ll.lat, lng: ll.lng };
-      setCoords(pos);
-      const addr = await reverseGeocode(pos.lat, pos.lng);
-      setLocationText(addr || `${pos.lat.toFixed(6)}, ${pos.lng.toFixed(6)}`);
-    });
-
-    // search (press Enter)
-    const input = searchInputRef.current;
-    const onKey = async (e) => {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        const q = input.value.trim();
-        if (!q) return;
-        const hit = await searchAddress(q);
-        if (!hit) return;
-        map.setView([hit.lat, hit.lng], 15);
-        marker.setLatLng([hit.lat, hit.lng]);
-        setCoords({ lat: hit.lat, lng: hit.lng });
-        setLocationText(hit.label || `${hit.lat.toFixed(6)}, ${hit.lng.toFixed(6)}`);
-      }
-    };
-    input?.addEventListener("keydown", onKey);
-
-    // make sure tiles paint
-    setTimeout(() => map.invalidateSize(), 50);
-    const onResize = () => map.invalidateSize();
-    window.addEventListener("resize", onResize);
-
-    return () => {
-      input?.removeEventListener("keydown", onKey);
-      window.removeEventListener("resize", onResize);
-      map.remove();
-      mapRef.current = null;
-      markerRef.current = null;
-    };
-  }, [leafletReady]);
-
-  // geolocate
-  const geoLocate = () => {
-    if (!navigator.geolocation || !mapRef.current || !markerRef.current) return;
-    navigator.geolocation.getCurrentPosition(async (res) => {
-      const pos = { lat: res.coords.latitude, lng: res.coords.longitude };
-      mapRef.current.setView([pos.lat, pos.lng], 15);
-      markerRef.current.setLatLng([pos.lat, pos.lng]);
-      setCoords(pos);
-      const addr = await reverseGeocode(pos.lat, pos.lng);
-      setLocationText(addr || `${pos.lat.toFixed(6)}, ${pos.lng.toFixed(6)}`);
-    });
-  };
-
-  const onSubmit = (e) => {
-    e.preventDefault();
-    if (!coords || !locationText) {
-      alert("Pick a spot on the map or search an address first.");
-      return;
+  // Validation functions
+  const validateField = (name, value) => {
+    switch (name) {
+      case 'title':
+        if (!value.trim()) return 'Game title is required';
+        if (value.length < 3) return 'Title must be at least 3 characters';
+        if (value.length > 50) return 'Title must be less than 50 characters';
+        return '';
+      case 'location':
+        if (!value.trim()) return 'Location is required';
+        if (value.length < 3) return 'Location must be at least 3 characters';
+        return '';
+      case 'date':
+        if (!value) return 'Date is required';
+        const selectedDate = new Date(value);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        if (selectedDate < today) return 'Date cannot be in the past';
+        return '';
+      case 'time':
+        if (!value) return 'Time is required';
+        return '';
+      case 'maxPlayers':
+        if (value < 2) return 'Must allow at least 2 players';
+        if (value > 20) return 'Maximum 20 players allowed';
+        return '';
+      case 'contactInfo':
+        if (!value.trim()) return 'Contact info is required';
+        return '';
+      default:
+        return '';
     }
-    const cleanTags = tags.split(",").map(t => t.trim()).filter(Boolean);
-    const game = {
-      id: uuid(),
-      name: name || `${formatSport(sportName)} — Game`,
-      mode: mode || "Lobby",
-      tags: cleanTags,
-      players: 0,
-      maxPlayers: Number(maxPlayers) || 4,
-      when: new Date(when).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-      location: locationText,
-      lat: coords.lat, lng: coords.lng,
-      notes, sport: sportName, createdAt: Date.now(),
-    };
-    try {
-      const raw = localStorage.getItem(LS_HOSTED_KEY);
-      const arr = raw ? JSON.parse(raw) : [];
-      arr.push(game);
-      localStorage.setItem(LS_HOSTED_KEY, JSON.stringify(arr));
-    } catch {}
-    navigate(`/join/${sportName}`);
   };
 
-  // styles
-  const page = { minHeight:"100vh", width:"100vw", background:"linear-gradient(180deg,#fff 0%,#f7fdf8 100%)", display:"grid", placeItems:"center", fontFamily:"Poppins,Arial,sans-serif", padding:16 };
-  const shell = { width:"min(1100px,100%)", background:"#fff", borderRadius:20, border:"1px solid rgba(0,0,0,0.08)", boxShadow:"0 14px 40px rgba(0,0,0,.10)", overflow:"hidden", display:"grid", gridTemplateColumns:"1.1fr 1.3fr" };
-  const left = { padding:22, display:"grid", alignContent:"start", gap:14 };
-  const right = { position:"relative", minHeight:520, background:"#eef7f0" };
-  const h1 = { margin:0, fontSize:26, color:"#14532d" };
-  const hint = { marginTop:-6, color:"#6b7280", fontSize:14 };
-  const label = { fontWeight:600, fontSize:13, color:"#111827" };
-  const input = { width:"100%", padding:"10px 12px", borderRadius:12, border:"1px solid #e5e7eb", outline:"none", background:"#f9fafb", fontSize:14 };
-  const row = { display:"grid", gridTemplateColumns:"1fr 1fr", gap:10 };
-  const btnPrimary = { appearance:"none", border:"none", cursor:"pointer", padding:"12px 14px", borderRadius:12, fontWeight:700, fontSize:14, background:"linear-gradient(90deg,#16a34a,#22c55e)", color:"#fff", boxShadow:"0 6px 16px rgba(34,197,94,0.35)" };
-  const btnGhost = { appearance:"none", border:"1px solid rgba(0,0,0,0.08)", background:"#fff", color:"#14532d", borderRadius:12, padding:"10px 14px", cursor:"pointer" };
-  const mapSearchWrap = { position:"absolute", top:12, left:12, right:12, display:"flex", gap:8, zIndex:2 };
-  const mapSearchInput = { flex:1, padding:"10px 12px", borderRadius:12, border:"1px solid #e5e7eb", outline:"none", background:"#fff", fontSize:14 };
-  const geoBtn = { appearance:"none", border:"none", borderRadius:12, padding:"10px 12px", background:"linear-gradient(90deg,#16a34a,#22c55e)", color:"#fff", fontWeight:700, cursor:"pointer", boxShadow:"0 4px 12px rgba(34,197,94,0.35)" };
-  const mapCanvas = { position:"absolute", inset:0, width:"100%", height:"100%" };
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    const processedValue = name === 'maxPlayers' ? parseInt(value) || 4 : value;
+    
+    setFormData(prev => ({
+      ...prev,
+      [name]: processedValue
+    }));
+
+    // Validate the field
+    const error = validateField(name, processedValue);
+    setValidationErrors(prev => ({
+      ...prev,
+      [name]: error
+    }));
+
+    // Check overall form validity
+    checkFormValidity();
+  };
+
+  const checkFormValidity = () => {
+    const errors = Object.values(validationErrors);
+    const hasErrors = errors.some(error => error !== '');
+    const hasRequiredFields = formData.title.trim() && formData.location.trim() && 
+                             formData.date && formData.time && formData.contactInfo.trim();
+    
+    setIsFormValid(!hasErrors && hasRequiredFields);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!isFormValid) return;
+
+    try {
+      setShowSuccessAlert(true);
+
+      // Get current user from localStorage
+      const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+      
+      const gameData = {
+        title: formData.title,
+        description: formData.description,
+        sport: sport,
+        location: formData.location,
+        date: formData.date,
+        time: formData.time,
+        maxPlayers: formData.maxPlayers,
+        skillLevel: formData.skillLevel,
+        contactInfo: formData.contactInfo,
+        hostId: currentUser.id,
+        hostName: currentUser.name
+      };
+
+      const savedGame = await apiClient.createGame(gameData);
+      console.log('Game created:', savedGame);
+
+      setTimeout(() => {
+        setShowSuccessAlert(false);
+        navigate(`/join/${sport}`);
+      }, 2000);
+
+    } catch (error) {
+      console.error('Failed to create game:', error);
+      setShowSuccessAlert(true);
+      setTimeout(() => {
+        setShowSuccessAlert(false);
+        navigate(`/join/${sport}`);
+      }, 2000);
+    }
+  };
+
+  // Styles
+  const containerStyle = {
+    minHeight: '100vh',
+    width: '100vw',
+    background: 'linear-gradient(180deg, #ffffff 0%, #f7fdf8 100%)',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontFamily: 'Poppins, Arial, sans-serif',
+    padding: '20px',
+    boxSizing: 'border-box',
+  };
+
+  const cardStyle = {
+    background: '#ffffff',
+    borderRadius: '20px',
+    padding: '40px',
+    boxShadow: '0 20px 40px rgba(0,0,0,0.1)',
+    maxWidth: '600px',
+    width: '100%',
+  };
+
+  const titleStyle = {
+    fontSize: '2.5rem',
+    fontWeight: '700',
+    color: '#16a34a',
+    textAlign: 'center',
+    marginBottom: '10px',
+  };
+
+  const subtitleStyle = {
+    fontSize: '1.1rem',
+    color: '#718096',
+    textAlign: 'center',
+    marginBottom: '30px',
+  };
+
+  const formStyle = {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '20px',
+  };
+
+  const inputGroupStyle = {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '8px',
+  };
+
+  const labelStyle = {
+    fontSize: '1rem',
+    fontWeight: '600',
+    color: '#2d3748',
+    marginBottom: '5px',
+  };
+
+  const inputStyle = {
+    padding: '15px',
+    borderRadius: '12px',
+    border: '2px solid #e2e8f0',
+    fontSize: '1rem',
+    fontFamily: 'Poppins, Arial, sans-serif',
+    transition: 'all 0.3s ease',
+    outline: 'none',
+    backgroundColor: '#f8fafc',
+  };
+
+  const errorMessageStyle = {
+    color: '#ef4444',
+    fontSize: '0.875rem',
+    marginTop: '5px',
+  };
+
+  const buttonContainerStyle = {
+    display: 'flex',
+    gap: '15px',
+    marginTop: '30px',
+    justifyContent: 'center',
+  };
+
+  const primaryButtonStyle = {
+    padding: '15px 30px',
+    borderRadius: '12px',
+    backgroundColor: '#16a34a',
+    color: 'white',
+    border: 'none',
+    fontSize: '1rem',
+    fontWeight: '600',
+    fontFamily: 'Poppins, Arial, sans-serif',
+    cursor: 'pointer',
+    transition: 'all 0.3s ease',
+    opacity: isFormValid ? 1 : 0.5,
+  };
+
+  const secondaryButtonStyle = {
+    ...primaryButtonStyle,
+    backgroundColor: '#e2e8f0',
+    color: '#4a5568',
+    opacity: 1,
+  };
+
+  const successAlertStyle = {
+    position: 'fixed',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    backgroundColor: '#10b981',
+    color: 'white',
+    padding: '20px 40px',
+    borderRadius: '15px',
+    boxShadow: '0 10px 30px rgba(16, 185, 129, 0.3)',
+    fontSize: '1.2rem',
+    fontWeight: '600',
+    zIndex: 1000,
+    display: 'flex',
+    alignItems: 'center',
+    gap: '10px',
+  };
+
+  const overlayStyle = {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    zIndex: 999,
+    display: showSuccessAlert ? 'block' : 'none',
+  };
 
   return (
-    <div style={page}>
-      <div style={{ width:"min(1100px,100%)", marginBottom:12 }}>
-        <button style={btnGhost} onClick={() => navigate(`/sport/${sportName}`)}>← Back</button>
-      </div>
-
-      <div style={shell}>
-        {/* Left: FORM */}
-        <form style={left} onSubmit={onSubmit}>
-          <h1 style={h1}>Host a {formatSport(sportName)} Game</h1>
-          <p style={hint}>Fill in the details and drop a pin on the map.</p>
-
-          <div>
-            <label style={label}>Game Name</label>
-            <input style={input} value={name} onChange={e => setName(e.target.value)} placeholder="e.g., Pick-Up @ Rec Centre" />
+    <>
+      {/* Success Alert */}
+      {showSuccessAlert && (
+        <div style={overlayStyle}>
+          <div style={successAlertStyle}>
+            <span>✅</span>
+            Game created successfully!
           </div>
+        </div>
+      )}
 
-          <div style={row}>
-            <div>
-              <label style={label}>Mode</label>
-              <select style={input} value={mode} onChange={e => setMode(e.target.value)}>
-                <option>Lobby</option>
-                <option>Round Robin</option>
-                <option>Tournament</option>
-                <option>Pickup</option>
-              </select>
+      <div style={containerStyle}>
+        <div style={cardStyle}>
+          <h1 style={titleStyle}>Host a {sportDisplay} Game</h1>
+          <p style={subtitleStyle}>
+            Create a game and invite players to join you
+          </p>
+          
+          <form style={formStyle} onSubmit={handleSubmit}>
+            <div style={inputGroupStyle}>
+              <label style={labelStyle} htmlFor="title">Game Title</label>
+              <input
+                style={inputStyle}
+                type="text"
+                id="title"
+                name="title"
+                value={formData.title}
+                onChange={handleInputChange}
+                placeholder="Enter game title"
+                maxLength={50}
+                required
+              />
+              {validationErrors.title && (
+                <div style={errorMessageStyle}>{validationErrors.title}</div>
+              )}
             </div>
-            <div>
-              <label style={label}>Max Players</label>
-              <input style={input} type="number" min={2} max={24} value={maxPlayers} onChange={e => setMaxPlayers(e.target.value)} />
+
+            <div style={inputGroupStyle}>
+              <label style={labelStyle} htmlFor="description">Description (Optional)</label>
+              <textarea
+                style={{...inputStyle, minHeight: '80px', resize: 'vertical'}}
+                id="description"
+                name="description"
+                value={formData.description}
+                onChange={handleInputChange}
+                placeholder="Describe your game..."
+                maxLength={200}
+              />
             </div>
-          </div>
 
-          <div>
-            <label style={label}>Date & Time</label>
-            <input style={input} type="datetime-local" value={when} onChange={e => setWhen(e.target.value)} />
-          </div>
-
-          <div>
-            <label style={label}>Tags (comma separated)</label>
-            <input style={input} value={tags} onChange={e => setTags(e.target.value)} placeholder="e.g., casual, friendly, beginner" />
-          </div>
-
-          <div>
-            <label style={label}>Notes</label>
-            <textarea style={{ ...input, minHeight: 88, resize: "vertical" }} value={notes} onChange={e => setNotes(e.target.value)} placeholder="Any specifics players should know…" />
-          </div>
-
-          <div>
-            <label style={label}>Chosen Location</label>
-            <input style={{ ...input, background: "#f3f4f6" }} value={locationText} readOnly />
-          </div>
-
-          <div style={{ display:"flex", gap:10, marginTop:4 }}>
-            <button type="button" style={btnGhost} onClick={() => navigate(`/join/${sportName}`)}>Preview Join Page</button>
-            <button type="submit" style={btnPrimary}>Create Game</button>
-          </div>
-        </form>
-
-        {/* Right: MAP */}
-        <div style={right}>
-          <div style={mapSearchWrap}>
-            <input ref={searchInputRef} style={mapSearchInput} placeholder="Search an address (press Enter)" />
-            <button type="button" style={geoBtn} onClick={geoLocate}>Use My Location</button>
-          </div>
-          {!leafletReady && (
-            <div style={{ position:"absolute", inset:0, display:"grid", placeItems:"center", color:brand.muted }}>
-              Loading map…
+            <div style={inputGroupStyle}>
+              <label style={labelStyle} htmlFor="location">Location</label>
+              <input
+                style={inputStyle}
+                type="text"
+                id="location"
+                name="location"
+                value={formData.location}
+                onChange={handleInputChange}
+                placeholder="Where will the game be played?"
+                required
+              />
+              {validationErrors.location && (
+                <div style={errorMessageStyle}>{validationErrors.location}</div>
+              )}
             </div>
-          )}
-          <div ref={mapElRef} style={mapCanvas} />
+
+            <div style={{display: 'flex', gap: '15px'}}>
+              <div style={{...inputGroupStyle, flex: 1}}>
+                <label style={labelStyle} htmlFor="date">Date</label>
+                <input
+                  style={inputStyle}
+                  type="date"
+                  id="date"
+                  name="date"
+                  value={formData.date}
+                  onChange={handleInputChange}
+                  required
+                />
+                {validationErrors.date && (
+                  <div style={errorMessageStyle}>{validationErrors.date}</div>
+                )}
+              </div>
+
+              <div style={{...inputGroupStyle, flex: 1}}>
+                <label style={labelStyle} htmlFor="time">Time</label>
+                <input
+                  style={inputStyle}
+                  type="time"
+                  id="time"
+                  name="time"
+                  value={formData.time}
+                  onChange={handleInputChange}
+                  required
+                />
+                {validationErrors.time && (
+                  <div style={errorMessageStyle}>{validationErrors.time}</div>
+                )}
+              </div>
+            </div>
+
+            <div style={{display: 'flex', gap: '15px'}}>
+              <div style={{...inputGroupStyle, flex: 1}}>
+                <label style={labelStyle} htmlFor="maxPlayers">Max Players</label>
+                <input
+                  style={inputStyle}
+                  type="number"
+                  id="maxPlayers"
+                  name="maxPlayers"
+                  value={formData.maxPlayers}
+                  onChange={handleInputChange}
+                  min="2"
+                  max="20"
+                  required
+                />
+                {validationErrors.maxPlayers && (
+                  <div style={errorMessageStyle}>{validationErrors.maxPlayers}</div>
+                )}
+              </div>
+
+              <div style={{...inputGroupStyle, flex: 1}}>
+                <label style={labelStyle} htmlFor="skillLevel">Skill Level</label>
+                <select
+                  style={inputStyle}
+                  id="skillLevel"
+                  name="skillLevel"
+                  value={formData.skillLevel}
+                  onChange={handleInputChange}
+                >
+                  <option value="beginner">Beginner</option>
+                  <option value="intermediate">Intermediate</option>
+                  <option value="advanced">Advanced</option>
+                  <option value="expert">Expert</option>
+                </select>
+              </div>
+            </div>
+
+            <div style={inputGroupStyle}>
+              <label style={labelStyle} htmlFor="contactInfo">Contact Information</label>
+              <input
+                style={inputStyle}
+                type="text"
+                id="contactInfo"
+                name="contactInfo"
+                value={formData.contactInfo}
+                onChange={handleInputChange}
+                placeholder="Phone number or email"
+                required
+              />
+              {validationErrors.contactInfo && (
+                <div style={errorMessageStyle}>{validationErrors.contactInfo}</div>
+              )}
+            </div>
+
+            <div style={buttonContainerStyle}>
+              <button
+                type="button"
+                style={secondaryButtonStyle}
+                onClick={() => navigate(`/sport/${sport}`)}
+              >
+                Back
+              </button>
+              
+              <button
+                type="submit"
+                style={primaryButtonStyle}
+                disabled={!isFormValid}
+              >
+                Create Game
+              </button>
+            </div>
+          </form>
         </div>
       </div>
-    </div>
-  );
-}
-
-/* Wrap with ErrorBoundary so failures don’t blank the screen */
-export default function HostGame() {
-  return (
-    <ErrorBoundary>
-      <HostGameInner />
-    </ErrorBoundary>
+    </>
   );
 }

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import apiClient from "./utils/api";
 
 export default function UserProfile() {
   const navigate = useNavigate();
@@ -92,7 +93,7 @@ export default function UserProfile() {
     setTimeout(checkFormValidity, 0);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     // Final validation check
@@ -100,25 +101,45 @@ export default function UserProfile() {
       return;
     }
     
-    // Show success animation
-    setShowSuccessAlert(true);
-    
-    // Save user data to localStorage
-    const userData = {
-      ...formData,
-      selectedSport: selectedSport,
-      timestamp: new Date().toISOString()
-    };
-    localStorage.setItem('userProfile', JSON.stringify(userData));
-    
-    console.log('User data saved:', userData);
-    
-    // Hide alert and redirect after animation
-    setTimeout(() => {
-      setShowSuccessAlert(false);
-      // Navigate to HostOrJoin with the selected sport
-      navigate(`/sport/${selectedSport}`);
-    }, 2000);
+    try {
+      // Show success animation
+      setShowSuccessAlert(true);
+      
+      // Prepare user data for backend
+      const userData = {
+        name: formData.name,
+        phone: formData.phone,
+        skillLevel: formData.skillLevel,
+        selectedSport: selectedSport,
+        preferences: {
+          favoriteSports: [selectedSport],
+          skillLevel: formData.skillLevel
+        }
+      };
+      
+      // Save to backend
+      const savedUser = await apiClient.createUser(userData);
+      console.log('User saved to backend:', savedUser);
+      
+      // Also save to localStorage for quick access
+      localStorage.setItem('currentUser', JSON.stringify(savedUser));
+      
+      // Hide alert and redirect after animation
+      setTimeout(() => {
+        setShowSuccessAlert(false);
+        // Navigate to HostOrJoin with the selected sport
+        navigate(`/sport/${selectedSport}`);
+      }, 2000);
+      
+    } catch (error) {
+      console.error('Failed to save user:', error);
+      // Still show success animation but log the error
+      setShowSuccessAlert(true);
+      setTimeout(() => {
+        setShowSuccessAlert(false);
+        navigate(`/sport/${selectedSport}`);
+      }, 2000);
+    }
   };
 
   const handleBackToHome = () => {
