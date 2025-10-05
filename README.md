@@ -32,9 +32,59 @@ mruhacks25-joinagame/
 ## ⚙️ Installation
 
 ### Prerequisites
-- **Node.js** (16.0.0 or higher) - [Download here](https://nodejs.org/)
-- **Git** - [Download here](https://git-scm.com/)
-- **Modern Browser** (Chrome, Firefox, Safari, Edge)
+
+#### Install Node.js (Choose your platform)
+
+**Windows:**
+```bash
+# Download from https://nodejs.org/ or use Chocolatey
+choco install nodejs
+```
+
+**macOS:**
+```bash
+# Using Homebrew
+brew install node
+
+# Or download from https://nodejs.org/
+```
+
+**Linux (Ubuntu/Debian):**
+```bash
+# Using apt
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+sudo apt-get install -y nodejs
+
+# Or using snap
+sudo snap install node --classic
+```
+
+**Linux (CentOS/RHEL):**
+```bash
+# Using yum
+curl -fsSL https://rpm.nodesource.com/setup_18.x | sudo bash -
+sudo yum install -y nodejs
+```
+
+#### Install Git
+```bash
+# Windows (Chocolatey)
+choco install git
+
+# macOS (Homebrew)
+brew install git
+
+# Linux
+sudo apt-get install git  # Ubuntu/Debian
+sudo yum install git      # CentOS/RHEL
+```
+
+#### Verify Installation
+```bash
+node --version  # Should show v16.0.0 or higher
+npm --version   # Should show 8.0.0 or higher
+git --version   # Should show git version
+```
 
 ### Quick Setup
 
@@ -44,17 +94,48 @@ mruhacks25-joinagame/
    cd mruhacks25-joinagame
    ```
 
-2. **Install dependencies**
+2. **Install Major Dependencies**
+
+   **Root Level:**
    ```bash
+   # Install Vite globally (development server)
+   npm install -g vite
+   
    # Install root dependencies
    npm install
-   
-   # Install frontend dependencies
+   ```
+
+   **Frontend Dependencies:**
+   ```bash
    cd my-app
-   npm install
    
-   # Install backend dependencies
+   # Core React dependencies
+   npm install react react-dom
+   npm install react-router-dom
+   
+   # Development dependencies
+   npm install @vitejs/plugin-react
+   npm install vite
+   
+   # UI and Animation libraries
+   npm install three
+   npm install leaflet
+   npm install react-leaflet
+   
+   # Install all frontend dependencies
+   npm install
+   ```
+
+   **Backend Dependencies:**
+   ```bash
    cd backend
+   
+   # Core Express.js dependencies
+   npm install express
+   npm install cors
+   npm install nodemon
+   
+   # Install all backend dependencies
    npm install
    ```
 
@@ -65,12 +146,14 @@ mruhacks25-joinagame/
    cd my-app/backend
    npm start
    ```
+   Backend will run on: `http://localhost:3001`
    
    **Terminal 2 - Frontend:**
    ```bash
    cd my-app
    npm run dev
    ```
+   Frontend will run on: `http://localhost:5173/`
 
 ### Or use the included scripts:
 
