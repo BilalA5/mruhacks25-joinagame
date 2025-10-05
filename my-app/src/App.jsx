@@ -123,10 +123,11 @@ function GradientBackground() {
     <div style={{
       position: 'absolute',
       inset: 0,
-      background: 'linear-gradient(45deg, rgba(22,163,74,0.1) 0%, rgba(34,197,94,0.05) 25%, rgba(255,255,255,0) 50%, rgba(34,197,94,0.05) 75%, rgba(22,163,74,0.1) 100%)',
+      background: 'linear-gradient(45deg, rgba(22,163,74,0.15) 0%, rgba(34,197,94,0.08) 25%, rgba(255,255,255,0.02) 50%, rgba(34,197,94,0.08) 75%, rgba(22,163,74,0.15) 100%)',
       backgroundSize: '400% 400%',
       animation: 'gradientShift 8s ease infinite',
       pointerEvents: 'none',
+      zIndex: 1,
     }}>
       <style>{`
         @keyframes gradientShift {
@@ -146,20 +147,20 @@ function SparklesBackground() {
 
   useEffect(() => {
     const newSparkles = [];
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 30; i++) {
       newSparkles.push({
         id: i,
         x: Math.random() * 100,
         y: Math.random() * 100,
         delay: Math.random() * 3,
-        size: Math.random() * 3 + 1,
+        size: Math.random() * 4 + 2,
       });
     }
     setSparkles(newSparkles);
   }, []);
 
   return (
-    <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none' }}>
+    <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none', zIndex: 1 }}>
       {sparkles.map((sparkle) => (
         <div
           key={sparkle.id}
@@ -172,7 +173,8 @@ function SparklesBackground() {
             background: 'linear-gradient(45deg, #16a34a, #22c55e)',
             borderRadius: '50%',
             animation: `sparkle 2s ease-in-out infinite ${sparkle.delay}s`,
-            opacity: 0.7,
+            opacity: 0.8,
+            boxShadow: '0 0 10px rgba(22, 163, 74, 0.3)',
           }}
         />
       ))}
