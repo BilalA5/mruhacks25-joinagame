@@ -21,6 +21,7 @@
   "homepage": "https://github.com/BilalA5/mruhacks25-joinagame#readme",
   "dependencies": {
     "eslint": "^9.37.0",
-    "sqlite3": "^5.1.7"
+    "sqlite3": "^5.1.7",
+    "vite": "^7.1.9"
   }
 }
