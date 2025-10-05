@@ -48,6 +48,53 @@ function WobbleCard({ children, onClick }) {
   );
 }
 
+// Floating Navbar inspired by Aceternity UI
+// https://ui.aceternity.com/components/floating-navbar
+function FloatingNavbar() {
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      setIsVisible(currentScrollY < lastScrollY || currentScrollY < 10);
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [lastScrollY]);
+
+  return (
+    <div style={{
+      position: 'fixed',
+      top: 20,
+      left: '50%',
+      transform: 'translateX(-50%)',
+      zIndex: 1000,
+      opacity: isVisible ? 1 : 0,
+      transition: 'opacity 0.3s ease',
+    }}>
+      <div style={{
+        background: 'rgba(255, 255, 255, 0.9)',
+        backdropFilter: 'blur(10px)',
+        borderRadius: '50px',
+        padding: '10px 20px',
+        border: '1px solid rgba(22, 163, 74, 0.2)',
+        boxShadow: '0 8px 32px rgba(22, 163, 74, 0.1)',
+      }}>
+        <span style={{
+          color: '#16a34a',
+          fontWeight: '600',
+          fontSize: '1rem',
+        }}>
+          joinAGame
+        </span>
+      </div>
+    </div>
+  );
+}
+
 // Text Reveal Effect inspired by Aceternity UI
 // https://ui.aceternity.com/components/text-reveal-card
 function TextRevealEffect({ children, delay = 0 }) {
@@ -182,6 +229,9 @@ function App() {
             position: 'relative',
           }}
         >
+          {/* Floating Navbar */}
+          <FloatingNavbar />
+          
           {/* Background Effects */}
           <GradientBackground />
           <SparklesBackground />
@@ -258,9 +308,13 @@ function App() {
               color: '#9ca3af',
               fontSize: '0.9rem',
               letterSpacing: '0.4px',
+              position: 'relative',
+              zIndex: 10,
             }}
           >
-            <p>LINKING the world to make a better place • joinAGame © 2025</p>
+            <TextRevealEffect delay={1500}>
+              <p>LINKING the world to make a better place • joinAGame © 2025</p>
+            </TextRevealEffect>
           </div>
         </div>
       } />
