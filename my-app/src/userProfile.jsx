@@ -7,7 +7,6 @@ export default function UserProfile() {
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
-    sportPreferences: '',
     skillLevel: 'beginner'
   });
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
@@ -15,13 +14,11 @@ export default function UserProfile() {
   const [validationErrors, setValidationErrors] = useState({
     name: '',
     phone: '',
-    sportPreferences: '',
     skillLevel: ''
   });
   const [fieldStates, setFieldStates] = useState({
     name: 'neutral',
     phone: 'neutral',
-    sportPreferences: 'neutral',
     skillLevel: 'neutral'
   });
   const [isFormValid, setIsFormValid] = useState(false);
@@ -50,16 +47,11 @@ export default function UserProfile() {
     return '';
   };
 
-  const validateSportPreferences = (sports) => {
-    if (!sports.trim()) return 'Sport preferences are required';
-    if (sports.length > 100) return 'Preferences must be less than 100 characters';
-    return '';
-  };
 
   const checkFormValidity = () => {
     const errors = Object.values(validationErrors);
     const hasErrors = errors.some(error => error !== '');
-    const hasRequiredFields = formData.name.trim() && formData.sportPreferences.trim();
+    const hasRequiredFields = formData.name.trim();
     
     setIsFormValid(!hasErrors && hasRequiredFields);
   };
@@ -81,9 +73,6 @@ export default function UserProfile() {
         break;
       case 'phone':
         error = validatePhone(value);
-        break;
-      case 'sportPreferences':
-        error = validateSportPreferences(value);
         break;
     }
     
