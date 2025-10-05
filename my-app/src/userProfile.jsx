@@ -12,6 +12,19 @@ export default function UserProfile() {
   });
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
   const [selectedSport, setSelectedSport] = useState('pickleball'); // default fallback
+  const [validationErrors, setValidationErrors] = useState({
+    name: '',
+    phone: '',
+    sportPreferences: '',
+    skillLevel: ''
+  });
+  const [fieldStates, setFieldStates] = useState({
+    name: 'neutral',
+    phone: 'neutral',
+    sportPreferences: 'neutral',
+    skillLevel: 'neutral'
+  });
+  const [isFormValid, setIsFormValid] = useState(false);
 
   // Get the selected sport from the previous page
   useEffect(() => {
@@ -21,16 +34,82 @@ export default function UserProfile() {
     }
   }, [location.state]);
 
+  // Validation functions
+  const validateName = (name) => {
+    if (!name.trim()) return 'Name is required';
+    if (name.length < 2) return 'Name must be at least 2 characters';
+    if (name.length > 50) return 'Name must be less than 50 characters';
+    if (!/^[a-zA-Z\s]+$/.test(name)) return 'Name can only contain letters and spaces';
+    return '';
+  };
+
+  const validatePhone = (phone) => {
+    if (!phone) return ''; // optional field
+    if (!/^\d+$/.test(phone)) return 'Phone can only contain numbers';
+    if (phone.length !== 10) return 'Phone must be exactly 10 digits';
+    return '';
+  };
+
+  const validateSportPreferences = (sports) => {
+    if (!sports.trim()) return 'Sport preferences are required';
+    if (sports.length > 100) return 'Preferences must be less than 100 characters';
+    return '';
+  };
+
+  const checkFormValidity = () => {
+    const errors = Object.values(validationErrors);
+    const hasErrors = errors.some(error => error !== '');
+    const hasRequiredFields = formData.name.trim() && formData.sportPreferences.trim();
+    
+    setIsFormValid(!hasErrors && hasRequiredFields);
+  };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    
+    // Update form data
     setFormData(prev => ({
       ...prev,
       [name]: value
     }));
+    
+    // Validate specific field
+    let error = '';
+    switch(name) {
+      case 'name':
+        error = validateName(value);
+        break;
+      case 'phone':
+        error = validatePhone(value);
+        break;
+      case 'sportPreferences':
+        error = validateSportPreferences(value);
+        break;
+    }
+    
+    // Update validation errors
+    setValidationErrors(prev => ({
+      ...prev,
+      [name]: error
+    }));
+    
+    // Update field state
+    setFieldStates(prev => ({
+      ...prev,
+      [name]: error ? 'invalid' : (value ? 'valid' : 'neutral')
+    }));
+    
+    // Check overall form validity
+    setTimeout(checkFormValidity, 0);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    
+    // Final validation check
+    if (!isFormValid) {
+      return;
+    }
     
     // Show success animation
     setShowSuccessAlert(true);
@@ -215,7 +294,40 @@ export default function UserProfile() {
     display: showSuccessAlert ? 'block' : 'none',
   };
 
-  return (
+  // Enhanced input styling based on validation state
+  const getInputStyle = (fieldName) => {
+    const baseStyle = inputStyle;
+    const fieldState = fieldStates[fieldName];
+    
+    switch(fieldState) {
+      case 'valid':
+        return {
+          ...baseStyle,
+          borderColor: '#10b981',
+          backgroundColor: '#f0fdf4'
+        };
+      case 'invalid':
+        return {
+          ...baseStyle,
+          borderColor: '#ef4444',
+          backgroundColor: '#fef2f2'
+        };
+      default:
+        return baseStyle;
+    }
+  };
+
+  // Error message styling
+  const errorMessageStyle = {
+    color: '#ef4444',
+    fontSize: '0.875rem',
+    marginTop: '5px',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '5px'
+  };
+
+return (
     <>
       {/* CSS Animations */}
       <style>
@@ -267,7 +379,7 @@ export default function UserProfile() {
               <path className="success-checkmark" d="M9 12l2 2 4-4" />
               <circle cx="12" cy="12" r="10" />
             </svg>
-            Profile saved successfully!
+            Profiled Settings Saved.
           </div>
         </div>
       )}
@@ -283,40 +395,52 @@ export default function UserProfile() {
           <div style={inputGroupStyle}>
             <label style={labelStyle} htmlFor="name">Full Name</label>
             <input
-              style={inputStyle}
+              style={getInputStyle('name')}
               type="text"
               id="name"
               name="name"
               value={formData.name}
               onChange={handleInputChange}
               placeholder="Enter your full name"
+              maxLength={50}
               required
               onFocus={(e) => {
                 Object.assign(e.target.style, inputFocusStyle);
               }}
               onBlur={(e) => {
-                Object.assign(e.target.style, inputStyle);
+                Object.assign(e.target.style, getInputStyle('name'));
               }}
             />
+            {validationErrors.name && (
+              <div style={errorMessageStyle}>
+                {validationErrors.name}
+              </div>
+            )}
           </div>
 
           <div style={inputGroupStyle}>
             <label style={labelStyle} htmlFor="phone">Phone Number</label>
             <input
-              style={inputStyle}
+              style={getInputStyle('phone')}
               type="tel"
               id="phone"
               name="phone"
               value={formData.phone}
               onChange={handleInputChange}
-              placeholder="Enter your phone number"
+              placeholder="Enter 10 digit phone number"
+              maxLength={10}
               onFocus={(e) => {
                 Object.assign(e.target.style, inputFocusStyle);
               }}
               onBlur={(e) => {
-                Object.assign(e.target.style, inputStyle);
+                Object.assign(e.target.style, getInputStyle('phone'));
               }}
             />
+            {validationErrors.phone && (
+              <div style={errorMessageStyle}>
+                {validationErrors.phone}
+              </div>
+            )}
           </div>
 
           <div style={inputGroupStyle}>
@@ -360,30 +484,37 @@ export default function UserProfile() {
             
             <button
               type="submit"
-              style={primaryButtonStyle}
+              style={{
+                ...primaryButtonStyle,
+                opacity: isFormValid ? 1 : 0.5,
+                cursor: isFormValid ? 'pointer' : 'not-allowed'
+              }}
+              disabled={!isFormValid}
               onMouseEnter={(e) => {
-                e.target.style.backgroundColor = '#f7fdf8';
-                e.target.style.color = '#2d3748'; // dark gray for better contrast on light bg
-                e.target.style.transform = 'translateY(-3px)';
-                e.target.style.boxShadow = '0 8px 24px rgba(102, 126, 234, 0.25)';
-                e.target.style.transition =
-                  'all 0.25s ease-in-out'; // smooth transition
+                if (isFormValid) {
+                  e.target.style.backgroundColor = '#f7fdf8';
+                  e.target.style.color = '#2d3748';
+                  e.target.style.transform = 'translateY(-3px)';
+                  e.target.style.boxShadow = '0 8px 24px rgba(102, 126, 234, 0.25)';
+                  e.target.style.transition = 'all 0.25s ease-in-out';
+                }
               }}
               onMouseLeave={(e) => {
-                e.target.style.backgroundColor = '#2d3748';
-                e.target.style.color = '#f7fdf8';
-                e.target.style.transform = 'translateY(0)';
-                e.target.style.boxShadow = '0 4px 12px rgba(102, 126, 234, 0.15)';
-                e.target.style.transition =
-                  'all 0.25s ease-in-out';
+                if (isFormValid) {
+                  e.target.style.backgroundColor = '#2d3748';
+                  e.target.style.color = '#f7fdf8';
+                  e.target.style.transform = 'translateY(0)';
+                  e.target.style.boxShadow = '0 4px 12px rgba(102, 126, 234, 0.15)';
+                  e.target.style.transition = 'all 0.25s ease-in-out';
+                }
               }}
             >
               Save Profile
             </button>
           </div>
-        </form>
+            </form>
         </div>
-      </div>
+    </div>
     </>
   );
 }
