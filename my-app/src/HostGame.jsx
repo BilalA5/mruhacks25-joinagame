@@ -251,7 +251,7 @@ function HostGameInner() {
       setShowToast(true);
       setTimeout(() => {
         setShowToast(false);
-        navigate(`/join/${sport}`);
+        navigate(`/join/${sport ? sport.toLowerCase() : ''}`);
       }, 2000);
       
     } catch (error) {
@@ -296,7 +296,7 @@ function HostGameInner() {
 
       <div style={page}>
       <div style={{ width:"min(1100px,100%)", marginBottom:12 }}>
-        <button style={btnGhost} onClick={() => navigate(`/sport/${sport}`)}>← Back</button>
+        <button style={btnGhost} onClick={() => navigate(`/sport/${sport ? sport.toLowerCase() : ''}`)}>← Back</button>
       </div>
 
       <div style={shell}>
@@ -347,7 +347,7 @@ function HostGameInner() {
           </div>
 
           <div style={{ display:"flex", gap:10, marginTop:4 }}>
-            <button type="button" style={btnGhost} onClick={() => navigate(`/join/${sport}`)}>Preview Join Page</button>
+            <button type="button" style={btnGhost} onClick={() => navigate(`/join/${sport ? sport.toLowerCase() : ''}`)}>Preview Join Page</button>
             <button type="submit" style={btnPrimary}>Create Game</button>
           </div>
         </form>
