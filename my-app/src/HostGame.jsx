@@ -109,6 +109,8 @@ function HostGameInner() {
   const [notes, setNotes] = useState("Bring your own gear. All levels welcome.");
   const [locationText, setLocationText] = useState("");
   const [coords, setCoords] = useState(null);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
 
   // map refs
   const mapElRef = useRef(null);
@@ -205,7 +207,9 @@ function HostGameInner() {
   const onSubmit = async (e) => {
     e.preventDefault();
     if (!coords || !locationText) {
-      alert("Pick a spot on the map or search an address first.");
+      setToastMessage("Pick a spot on the map or search an address first.");
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
       return;
     }
     
@@ -231,12 +235,18 @@ function HostGameInner() {
       };
 
       await apiClient.createGame(gameData);
-      alert('Game created successfully!');
-      navigate(`/join/${sport}`);
+      setToastMessage('Game created successfully!');
+      setShowToast(true);
+      setTimeout(() => {
+        setShowToast(false);
+        navigate(`/join/${sport}`);
+      }, 2000);
       
     } catch (error) {
       console.error('Failed to create game:', error);
-      alert('Failed to create game. Please try again.');
+      setToastMessage('Failed to create game. Please try again.');
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
     }
   };
 
@@ -256,9 +266,22 @@ function HostGameInner() {
   const mapSearchInput = { flex:1, padding:"10px 12px", borderRadius:12, border:"1px solid #e5e7eb", outline:"none", background:"#fff", fontSize:14 };
   const geoBtn = { appearance:"none", border:"none", borderRadius:12, padding:"10px 12px", background:"linear-gradient(90deg,#16a34a,#22c55e)", color:"#fff", fontWeight:700, cursor:"pointer", boxShadow:"0 4px 12px rgba(34,197,94,0.35)" };
   const mapCanvas = { position:"absolute", inset:0, width:"100%", height:"100%" };
+  const toastStyle = { position:"fixed", top:20, right:20, background:"#10b981", color:"white", padding:"16px 24px", borderRadius:12, boxShadow:"0 8px 25px rgba(16,185,129,0.3)", fontSize:14, fontWeight:600, zIndex:1000, display:"flex", alignItems:"center", gap:8 };
+  const overlayToast = { position:"fixed", top:0, left:0, width:"100%", height:"100%", backgroundColor:"rgba(0,0,0,0.5)", zIndex:999, display:showToast ? "block" : "none" };
 
   return (
-    <div style={page}>
+    <>
+      {/* Toast Notification */}
+      {showToast && (
+        <div style={overlayToast}>
+          <div style={toastStyle}>
+            <span>ℹ️</span>
+            {toastMessage}
+          </div>
+        </div>
+      )}
+
+      <div style={page}>
       <div style={{ width:"min(1100px,100%)", marginBottom:12 }}>
         <button style={btnGhost} onClick={() => navigate(`/sport/${sport}`)}>← Back</button>
       </div>
@@ -331,6 +354,7 @@ function HostGameInner() {
         </div>
       </div>
     </div>
+    </>
   );
 }
 
