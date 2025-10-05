@@ -44,13 +44,68 @@
       },
       "createdAt": "2025-10-05T01:37:56.738Z",
       "updatedAt": "2025-10-05T01:37:56.738Z"
+    },
+    {
+      "id": "mgd25alayp4x2m3lmok",
+      "name": "sa",
+      "phone": "2313131313",
+      "skillLevel": "advanced",
+      "selectedSport": "handball",
+      "preferences": {
+        "favoriteSports": [
+          "handball"
+        ],
+        "skillLevel": "advanced"
+      },
+      "createdAt": "2025-10-05T02:03:14.014Z",
+      "updatedAt": "2025-10-05T02:03:14.014Z"
     }
   ],
-  "games": [],
+  "games": [
+    {
+      "id": "mgd25ez40m5725gm13t9",
+      "title": "Handball — Game",
+      "description": "Bring your own gear. All levels welcome.",
+      "sport": "handball",
+      "location": "Indigo Lot 082, 529, 9 Avenue SW, Downtown Commercial Core, Calgary, Alberta, T2P 1G1, Canada",
+      "date": "2025-10-05",
+      "time": "02:48 AM",
+      "maxPlayers": 4,
+      "skillLevel": "Lobby",
+      "contactInfo": "2313131313",
+      "hostId": "mgd25alayp4x2m3lmok",
+      "hostName": "sa",
+      "lat": 51.0447,
+      "lng": -114.0719,
+      "players": [],
+      "createdAt": "2025-10-05T02:03:19.696Z",
+      "updatedAt": "2025-10-05T02:03:19.696Z",
+      "status": "open"
+    },
+
+    {
+     "id": "mgd25ez40m5725gm13t9",
+      "title": "Handball — Game",
+      "description": "Bring your own gear. All levels welcome.",
+      "sport": "handball",
+      "location": "Indigo Lot 082, 529, 9 Avenue SW, Downtown Commercial Core, Calgary, Alberta, T2P 1G1, Canada",
+      "date": "2025-10-05",
+      "time": "02:48 AM",
+      "maxPlayers": 4,
+      "skillLevel": "Lobby",
+      "contactInfo": "2313131313",
+      "lat": 51.0447,
+      "lng": -114.0719,
+      "players": [],
+      "createdAt": "2025-10-05T02:03:19.696Z",
+      "updatedAt": "2025-10-05T02:03:19.696Z",
+      "status": "open"   
+    }
+  ],
   "sports": [
     "pickleball",
     "handball",
     "table-tennis"
   ],
-  "lastUpdated": "2025-10-05T01:37:56.738Z"
+  "lastUpdated": "2025-10-05T02:03:19.696Z"
 }
