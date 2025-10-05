@@ -217,7 +217,6 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={
-        /* ... your existing landing JSX ... */
         <div
           style={{
             minHeight: '100vh',
@@ -329,7 +328,7 @@ function App() {
               left: '50%',
               transform: 'translateX(-50%)',
               textAlign: 'center',
-              color: '#9ca3af',
+              color: '#0c0d0d',
               fontSize: '0.9rem',
               letterSpacing: '0.4px',
               zIndex: 10,
