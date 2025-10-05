@@ -241,6 +241,22 @@ function App() {
           {/* Background Effects */}
           <GradientBackground />
           <SparklesBackground />
+          
+          {/* React Bits Ballpit Effect */}
+          <div style={{
+            position: 'absolute',
+            inset: 0,
+            zIndex: 0,
+            opacity: 0.6,
+          }}>
+            <Ballpit
+              count={200}
+              gravity={0.7}
+              friction={0.8}
+              wallBounce={0.95}
+              followCursor={true}
+            />
+          </div>
           {/* Header */}
           <div style={{ textAlign: 'center', marginBottom: '60px', position: 'relative', zIndex: 10 }}>
             <TextRevealEffect delay={300}>
