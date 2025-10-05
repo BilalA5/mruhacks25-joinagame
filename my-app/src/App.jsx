@@ -5,6 +5,7 @@ import UserProfile from './userProfile.jsx'
 import HostGame from './HostGame.jsx'
 import JoinGame from './JoinGame.jsx'
 import { useState, useEffect } from 'react'
+import Ballpit from './Ballpit.jsx'
 
 // Wobble Card Component inspired by Aceternity UI
 // https://ui.aceternity.com/components/wobble-card
