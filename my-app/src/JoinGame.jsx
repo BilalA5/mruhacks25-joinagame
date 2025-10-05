@@ -21,7 +21,9 @@ export default function JoinGame() {
   const loadGames = async () => {
     try {
       setLoading(true);
-      const gamesData = await apiClient.getGamesBySport(sport);
+      // Normalize sport name to lowercase for backend consistency
+      const normalizedSport = sport ? sport.toLowerCase() : '';
+      const gamesData = await apiClient.getGamesBySport(normalizedSport);
       setGames(gamesData);
     } catch (error) {
       console.error('Failed to load games:', error);
@@ -293,7 +295,7 @@ export default function JoinGame() {
       <div style={containerStyle}>
         <button
           style={backButtonStyle}
-          onClick={() => navigate(`/sport/${sport}`)}
+          onClick={() => navigate(`/sport/${sport ? sport.toLowerCase() : ''}`)}
         >
           ← Back
         </button>
