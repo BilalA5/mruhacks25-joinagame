@@ -48,6 +48,29 @@ function WobbleCard({ children, onClick }) {
   );
 }
 
+// Background Gradient Animation inspired by Aceternity UI
+// https://ui.aceternity.com/components/background-gradient
+function GradientBackground() {
+  return (
+    <div style={{
+      position: 'absolute',
+      inset: 0,
+      background: 'linear-gradient(45deg, rgba(22,163,74,0.1) 0%, rgba(34,197,94,0.05) 25%, rgba(255,255,255,0) 50%, rgba(34,197,94,0.05) 75%, rgba(22,163,74,0.1) 100%)',
+      backgroundSize: '400% 400%',
+      animation: 'gradientShift 8s ease infinite',
+      pointerEvents: 'none',
+    }}>
+      <style>{`
+        @keyframes gradientShift {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+      `}</style>
+    </div>
+  );
+}
+
 // Sparkles Background Component inspired by Aceternity UI
 // https://ui.aceternity.com/components/sparkles
 function SparklesBackground() {
@@ -138,7 +161,8 @@ function App() {
             position: 'relative',
           }}
         >
-          {/* Sparkles Background */}
+          {/* Background Effects */}
+          <GradientBackground />
           <SparklesBackground />
           {/* Header */}
           <div style={{ textAlign: 'center', marginBottom: '60px' }}>
