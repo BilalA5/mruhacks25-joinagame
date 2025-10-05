@@ -1,0 +1,139 @@
+JoinAGame - Complete Setup Instructions
+=====================================
+
+This document provides step-by-step instructions for setting up the JoinAGame project on any local machine after cloning the repository.
+
+PROJECT STRUCTURE
+=================
+mruhacks25-joinagame/
+├── package.json                 # Root package.json (includes vite)
+├── my-app/                     # Frontend React application
+│   ├── package.json            # Frontend dependencies
+│   ├── src/                    # React source code
+│   └── backend/                # Express.js backend server
+│       ├── package.json        # Backend dependencies
+│       ├── server.js           # Main server file
+│       └── data.json           # Auto-created database file
+└── SETUP_INSTRUCTIONS.txt      # This file
+
+REQUIRED SOFTWARE
+=================
+- Node.js (version 16 or higher)
+- npm (comes with Node.js)
+- Git (for cloning the repository)
+
+SETUP STEPS
+===========
+
+1. CLONE THE REPOSITORY
+   --------------------
+   git clone https://github.com/BilalA5/mruhacks25-joinagame.git
+   cd mruhacks25-joinagame
+
+2. INSTALL ROOT DEPENDENCIES
+   -------------------------
+   npm install
+   # This installs: eslint, sqlite3, vite
+
+3. INSTALL FRONTEND DEPENDENCIES
+   ------------------------------
+   cd my-app
+   npm install
+   # This installs: react, react-dom, react-router-dom, vite, eslint, etc.
+
+4. INSTALL BACKEND DEPENDENCIES
+   -----------------------------
+   cd backend
+   npm install
+   # This installs: express, cors, nodemon
+
+5. START THE BACKEND SERVER
+   -------------------------
+   npm start
+   # Server will run on http://localhost:3001
+   # Keep this terminal open
+
+6. START THE FRONTEND (in a new terminal)
+   ---------------------------------------
+   cd my-app
+   npm run dev
+   # Frontend will run on http://localhost:5173
+   # Keep this terminal open
+
+7. ACCESS THE APPLICATION
+   ----------------------
+   Open your browser and go to: http://localhost:5173
+
+TROUBLESHOOTING
+===============
+
+COMMON ISSUES:
+
+1. "vite: command not found"
+   - Make sure you ran 'npm install' in the root directory
+   - The root package.json now includes vite dependency
+
+2. "Cannot connect to server"
+   - Ensure backend is running on port 3001
+   - Check that no other application is using port 3001
+   - Verify the backend server started successfully
+
+3. "Failed to create game"
+   - Create a user profile first before hosting games
+   - Check browser console for detailed error messages
+   - Ensure backend server is running
+
+4. "Port already in use"
+   - Kill processes using ports 3001 or 5173
+   - Use: lsof -ti:3001 | xargs kill (for port 3001)
+   - Use: lsof -ti:5173 | xargs kill (for port 5173)
+
+5. "Module not found" errors
+   - Delete node_modules folders and package-lock.json files
+   - Run npm install again in each directory
+   - Ensure you're in the correct directory when running commands
+
+DEVELOPMENT COMMANDS
+====================
+
+Backend Development:
+- npm run dev (uses nodemon for auto-restart)
+- npm start (production mode)
+
+Frontend Development:
+- npm run dev (development server with hot reload)
+- npm run build (create production build)
+- npm run preview (preview production build)
+
+DATA PERSISTENCE
+================
+- User data and games are stored in my-app/backend/data.json
+- This file is automatically created when the backend starts
+- Data persists between server restarts
+- To reset data, delete data.json and restart the server
+
+API ENDPOINTS
+=============
+Backend API is available at http://localhost:3001/api/
+
+Users:
+- GET /api/users - Get all users
+- POST /api/users - Create user
+- PUT /api/users/:id - Update user
+
+Games:
+- GET /api/games - Get all games
+- GET /api/games/:sport - Get games by sport
+- POST /api/games - Create game
+- POST /api/games/:gameId/join - Join game
+- DELETE /api/games/:gameId/players/:userId - Leave game
+
+SUPPORT
+=======
+If you encounter issues:
+1. Check the console logs in both frontend and backend terminals
+2. Verify all dependencies are installed correctly
+3. Ensure both servers are running
+4. Check that ports 3001 and 5173 are available
+
+The application should work identically on any machine after following these setup instructions.
