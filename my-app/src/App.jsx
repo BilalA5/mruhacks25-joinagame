@@ -48,6 +48,27 @@ function WobbleCard({ children, onClick }) {
   );
 }
 
+// Text Reveal Effect inspired by Aceternity UI
+// https://ui.aceternity.com/components/text-reveal-card
+function TextRevealEffect({ children, delay = 0 }) {
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsVisible(true), delay);
+    return () => clearTimeout(timer);
+  }, [delay]);
+
+  return (
+    <div style={{
+      opacity: isVisible ? 1 : 0,
+      transform: isVisible ? 'translateY(0)' : 'translateY(20px)',
+      transition: 'all 0.8s ease-out',
+    }}>
+      {children}
+    </div>
+  );
+}
+
 // Background Gradient Animation inspired by Aceternity UI
 // https://ui.aceternity.com/components/background-gradient
 function GradientBackground() {
@@ -165,28 +186,32 @@ function App() {
           <GradientBackground />
           <SparklesBackground />
           {/* Header */}
-          <div style={{ textAlign: 'center', marginBottom: '60px' }}>
-            <h1
-              style={{
-                color: '#16a34a',
-                fontSize: '3.5rem',
-                fontWeight: '700',
-                letterSpacing: '-1px',
-                marginBottom: '10px',
-              }}
-            >
-              joinAGame
-            </h1>
-            <p
-              style={{
-                color: '#4b5563',
-                fontSize: '1.2rem',
-                fontWeight: '400',
-                letterSpacing: '0.3px',
-              }}
-            >
-              Connect. Compete. Have fun.
-            </p>
+          <div style={{ textAlign: 'center', marginBottom: '60px', position: 'relative', zIndex: 10 }}>
+            <TextRevealEffect delay={300}>
+              <h1
+                style={{
+                  color: '#16a34a',
+                  fontSize: '3.5rem',
+                  fontWeight: '700',
+                  letterSpacing: '-1px',
+                  marginBottom: '10px',
+                }}
+              >
+                joinAGame
+              </h1>
+            </TextRevealEffect>
+            <TextRevealEffect delay={600}>
+              <p
+                style={{
+                  color: '#4b5563',
+                  fontSize: '1.2rem',
+                  fontWeight: '400',
+                  letterSpacing: '0.3px',
+                }}
+              >
+                Connect. Compete. Have fun.
+              </p>
+            </TextRevealEffect>
           </div>
 
           {/* Sport Cards */}
@@ -197,13 +222,15 @@ function App() {
               flexWrap: 'wrap',
               justifyContent: 'center',
               maxWidth: '900px',
+              position: 'relative',
+              zIndex: 10,
             }}
           >
-            {sports.map((sport) => (
-              <WobbleCard
-                key={sport.name}
-                onClick={() => handleSportClick(sport.name)}
-              >
+            {sports.map((sport, index) => (
+              <TextRevealEffect key={sport.name} delay={900 + (index * 200)}>
+                <WobbleCard
+                  onClick={() => handleSportClick(sport.name)}
+                >
                 <span style={{ fontSize: '3.5rem', marginBottom: '15px' }}>
                   {sport.emoji}
                 </span>
@@ -218,6 +245,7 @@ function App() {
                   {sport.displayName}
                 </span>
               </WobbleCard>
+              </TextRevealEffect>
             ))}
           </div>
 
