@@ -75,15 +75,16 @@ function FloatingNavbar() {
       transform: 'translateX(-50%)',
       zIndex: 1000,
       opacity: isVisible ? 1 : 0,
-      transition: 'opacity 0.3s ease',
+      transition: 'all 0.3s ease',
+      pointerEvents: isVisible ? 'auto' : 'none',
     }}>
       <div style={{
-        background: 'rgba(255, 255, 255, 0.9)',
-        backdropFilter: 'blur(10px)',
+        background: 'rgba(255, 255, 255, 0.95)',
+        backdropFilter: 'blur(15px)',
         borderRadius: '50px',
-        padding: '10px 20px',
-        border: '1px solid rgba(22, 163, 74, 0.2)',
-        boxShadow: '0 8px 32px rgba(22, 163, 74, 0.1)',
+        padding: '12px 24px',
+        border: '1px solid rgba(22, 163, 74, 0.3)',
+        boxShadow: '0 8px 32px rgba(22, 163, 74, 0.15), 0 0 0 1px rgba(255,255,255,0.05)',
       }}>
         <span style={{
           color: '#16a34a',
