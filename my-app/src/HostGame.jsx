@@ -1,6 +1,7 @@
 // src/hostGame.jsx
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import apiClient from './utils/api';
 
 /* ---------- Simple ErrorBoundary to avoid white screens ---------- */
 class ErrorBoundary extends React.Component {
@@ -86,7 +87,7 @@ async function searchAddress(q) {
 
 /* ---------- Main component ---------- */
 function HostGameInner() {
-  const { sportName } = useParams();
+  const { sport } = useParams();
   const navigate = useNavigate();
   const leafletReady = useLeafletReady();
 
@@ -97,14 +98,14 @@ function HostGameInner() {
   };
 
   // form state
-  const [name, setName] = useState(`${formatSport(sportName)} — Game`);
+  const [name, setName] = useState(`${formatSport(sport)} — Game`);
   const [mode, setMode] = useState("Lobby");
   const [maxPlayers, setMaxPlayers] = useState(4);
   const [when, setWhen] = useState(() => {
     const now = new Date(); now.setMinutes(now.getMinutes() + 45);
     return now.toISOString().slice(0, 16);
   });
-  const [tags, setTags] = useState(`${formatSport(sportName).toLowerCase()}, casual, game`);
+  const [tags, setTags] = useState(`${formatSport(sport).toLowerCase()}, casual, game`);
   const [notes, setNotes] = useState("Bring your own gear. All levels welcome.");
   const [locationText, setLocationText] = useState("");
   const [coords, setCoords] = useState(null);
@@ -201,32 +202,42 @@ function HostGameInner() {
     });
   };
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
     if (!coords || !locationText) {
       alert("Pick a spot on the map or search an address first.");
       return;
     }
-    const cleanTags = tags.split(",").map(t => t.trim()).filter(Boolean);
-    const game = {
-      id: uuid(),
-      name: name || `${formatSport(sportName)} — Game`,
-      mode: mode || "Lobby",
-      tags: cleanTags,
-      players: 0,
-      maxPlayers: Number(maxPlayers) || 4,
-      when: new Date(when).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-      location: locationText,
-      lat: coords.lat, lng: coords.lng,
-      notes, sport: sportName, createdAt: Date.now(),
-    };
+    
     try {
-      const raw = localStorage.getItem(LS_HOSTED_KEY);
-      const arr = raw ? JSON.parse(raw) : [];
-      arr.push(game);
-      localStorage.setItem(LS_HOSTED_KEY, JSON.stringify(arr));
-    } catch {}
-    navigate(`/join/${sportName}`);
+      // Get current user from localStorage
+      const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+      
+      const gameData = {
+        title: name || `${formatSport(sport)} — Game`,
+        description: notes,
+        sport: sport,
+        location: locationText,
+        date: new Date(when).toISOString().split('T')[0],
+        time: new Date(when).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        maxPlayers: Number(maxPlayers) || 4,
+        skillLevel: mode || "Lobby",
+        contactInfo: currentUser.phone || "Contact host",
+        hostId: currentUser.id,
+        hostName: currentUser.name,
+        lat: coords.lat,
+        lng: coords.lng,
+        players: []
+      };
+
+      await apiClient.createGame(gameData);
+      alert('Game created successfully!');
+      navigate(`/join/${sport}`);
+      
+    } catch (error) {
+      console.error('Failed to create game:', error);
+      alert('Failed to create game. Please try again.');
+    }
   };
 
   // styles
@@ -249,13 +260,13 @@ function HostGameInner() {
   return (
     <div style={page}>
       <div style={{ width:"min(1100px,100%)", marginBottom:12 }}>
-        <button style={btnGhost} onClick={() => navigate(`/sport/${sportName}`)}>← Back</button>
+        <button style={btnGhost} onClick={() => navigate(`/sport/${sport}`)}>← Back</button>
       </div>
 
       <div style={shell}>
         {/* Left: FORM */}
         <form style={left} onSubmit={onSubmit}>
-          <h1 style={h1}>Host a {formatSport(sportName)} Game</h1>
+          <h1 style={h1}>Host a {formatSport(sport)} Game</h1>
           <p style={hint}>Fill in the details and drop a pin on the map.</p>
 
           <div>
@@ -300,7 +311,7 @@ function HostGameInner() {
           </div>
 
           <div style={{ display:"flex", gap:10, marginTop:4 }}>
-            <button type="button" style={btnGhost} onClick={() => navigate(`/join/${sportName}`)}>Preview Join Page</button>
+            <button type="button" style={btnGhost} onClick={() => navigate(`/join/${sport}`)}>Preview Join Page</button>
             <button type="submit" style={btnPrimary}>Create Game</button>
           </div>
         </form>
