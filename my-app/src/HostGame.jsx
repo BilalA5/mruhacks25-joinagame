@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import apiClient from '../utils/api';
+import apiClient from './utils/api';
 
 export default function HostGame() {
   const navigate = useNavigate();

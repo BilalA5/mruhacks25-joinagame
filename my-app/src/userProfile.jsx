@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import apiClient from "../utils/api";
+import apiClient from "./utils/api";
 
 export default function UserProfile() {
   const navigate = useNavigate();
