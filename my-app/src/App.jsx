@@ -304,11 +304,12 @@ function App() {
             style={{
               position: 'absolute',
               bottom: '25px',
+              left: '50%',
+              transform: 'translateX(-50%)',
               textAlign: 'center',
               color: '#9ca3af',
               fontSize: '0.9rem',
               letterSpacing: '0.4px',
-              position: 'relative',
               zIndex: 10,
             }}
           >
