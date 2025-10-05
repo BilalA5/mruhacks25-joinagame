@@ -6,6 +6,48 @@ import HostGame from './HostGame.jsx'
 import JoinGame from './JoinGame.jsx'
 import { useState, useEffect } from 'react'
 
+// Wobble Card Component inspired by Aceternity UI
+// https://ui.aceternity.com/components/wobble-card
+function WobbleCard({ children, onClick }) {
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+
+  const handleMouseMove = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = (e.clientX - rect.left - rect.width / 2) / 10;
+    const y = (e.clientY - rect.top - rect.height / 2) / 10;
+    setMousePosition({ x, y });
+  };
+
+  const handleMouseLeave = () => {
+    setMousePosition({ x: 0, y: 0 });
+  };
+
+  return (
+    <div
+      style={{
+        background: '#ffffff',
+        borderRadius: '20px',
+        width: '220px',
+        height: '220px',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        boxShadow: '0 10px 30px rgba(22,163,74,0.1), 0 4px 12px rgba(0,0,0,0.05)',
+        transition: 'all 0.35s ease',
+        cursor: 'pointer',
+        border: '1px solid #e5e7eb',
+        transform: `translate3d(${mousePosition.x}px, ${mousePosition.y}px, 0) scale(1.05)`,
+      }}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      onClick={onClick}
+    >
+      {children}
+    </div>
+  );
+}
+
 // Sparkles Background Component inspired by Aceternity UI
 // https://ui.aceternity.com/components/sparkles
 function SparklesBackground() {
@@ -93,8 +135,11 @@ function App() {
             overflowX: 'hidden',
             padding: '20px',
             boxSizing: 'border-box',
+            position: 'relative',
           }}
         >
+          {/* Sparkles Background */}
+          <SparklesBackground />
           {/* Header */}
           <div style={{ textAlign: 'center', marginBottom: '60px' }}>
             <h1
@@ -131,33 +176,8 @@ function App() {
             }}
           >
             {sports.map((sport) => (
-              <div
+              <WobbleCard
                 key={sport.name}
-                style={{
-                  background: '#ffffff',
-                  borderRadius: '20px',
-                  width: '220px',
-                  height: '220px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  boxShadow:
-                    '0 10px 30px rgba(22,163,74,0.1), 0 4px 12px rgba(0,0,0,0.05)',
-                  transition: 'all 0.35s ease',
-                  cursor: 'pointer',
-                  border: '1px solid #e5e7eb',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-8px) scale(1.05)';
-                  e.currentTarget.style.boxShadow =
-                    '0 16px 40px rgba(22,163,74,0.25), 0 8px 16px rgba(0,0,0,0.08)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0) scale(1)';
-                  e.currentTarget.style.boxShadow =
-                    '0 10px 30px rgba(22,163,74,0.1), 0 4px 12px rgba(0,0,0,0.05)';
-                }}
                 onClick={() => handleSportClick(sport.name)}
               >
                 <span style={{ fontSize: '3.5rem', marginBottom: '15px' }}>
@@ -173,7 +193,7 @@ function App() {
                 >
                   {sport.displayName}
                 </span>
-              </div>
+              </WobbleCard>
             ))}
           </div>
 
