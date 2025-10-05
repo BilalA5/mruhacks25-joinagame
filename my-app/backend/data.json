@@ -359,6 +359,81 @@
       },
       "createdAt": "2025-10-05T04:55:59.915Z",
       "updatedAt": "2025-10-05T04:55:59.915Z"
+    },
+    {
+      "id": "mgd9e0lmcarvfwlhxle",
+      "name": "shayan",
+      "phone": "6666666666",
+      "skillLevel": "expert",
+      "selectedSport": "handball",
+      "preferences": {
+        "favoriteSports": [
+          "handball"
+        ],
+        "skillLevel": "expert"
+      },
+      "createdAt": "2025-10-05T05:25:58.282Z",
+      "updatedAt": "2025-10-05T05:25:58.282Z"
+    },
+    {
+      "id": "mgd9eqwgw2zgstj5vjp",
+      "name": " Bilal Ahmed",
+      "phone": "7777777777",
+      "skillLevel": "advanced",
+      "selectedSport": "handball",
+      "preferences": {
+        "favoriteSports": [
+          "handball"
+        ],
+        "skillLevel": "advanced"
+      },
+      "createdAt": "2025-10-05T05:26:32.368Z",
+      "updatedAt": "2025-10-05T05:26:32.368Z"
+    },
+    {
+      "id": "mgd9gvsd2vc98xkeqy5",
+      "name": " Bilal Ahmed",
+      "phone": "8888888888",
+      "skillLevel": "advanced",
+      "selectedSport": "handball",
+      "preferences": {
+        "favoriteSports": [
+          "handball"
+        ],
+        "skillLevel": "advanced"
+      },
+      "createdAt": "2025-10-05T05:28:12.013Z",
+      "updatedAt": "2025-10-05T05:28:12.013Z"
+    },
+    {
+      "id": "mgd9zwbowy087o30peq",
+      "name": "dsadada",
+      "phone": "1414141414",
+      "skillLevel": "advanced",
+      "selectedSport": "handball",
+      "preferences": {
+        "favoriteSports": [
+        "handball"
+    ],
+        "skillLevel": "advanced"
+      },
+      "createdAt": "2025-10-05T05:42:59.172Z",
+      "updatedAt": "2025-10-05T05:42:59.173Z"
+    },
+    {
+      "id": "mgda6637rcov9jehueo",
+      "name": "Howard",
+      "phone": "9875152323",
+      "skillLevel": "advanced",
+      "selectedSport": "table-tennis",
+      "preferences": {
+        "favoriteSports": [
+          "table-tennis"
+        ],
+        "skillLevel": "advanced"
+      },
+      "createdAt": "2025-10-05T05:47:51.763Z",
+      "updatedAt": "2025-10-05T05:47:51.763Z"
     }
   ],
   "games": [
@@ -657,10 +732,15 @@
           "userId": "mgd2qode4tpxbw7qnn6",
           "playerName": "arisda",
           "joinedAt": "2025-10-05T02:21:59.403Z"
+        },
+        {
+          "userId": "mgda6637rcov9jehueo",
+          "playerName": "Howard",
+          "joinedAt": "2025-10-05T05:48:59.420Z"
         }
       ],
       "createdAt": "2025-10-05T02:13:51.411Z",
-      "updatedAt": "2025-10-05T02:21:59.403Z",
+      "updatedAt": "2025-10-05T05:48:59.420Z",
       "status": "open"
     },
     {
@@ -704,9 +784,15 @@
       "hostName": "Mock Host 3",
       "lat": 51.0247,
       "lng": -114.0519,
-      "players": [],
+      "players": [
+        {
+          "userId": "mgda6637rcov9jehueo",
+          "playerName": "Howard",
+          "joinedAt": "2025-10-05T05:49:03.196Z"
+        }
+      ],
       "createdAt": "2025-10-05T02:13:51.411Z",
-      "updatedAt": "2025-10-05T02:13:51.411Z",
+      "updatedAt": "2025-10-05T05:49:03.196Z",
       "status": "open"
     },
     {
@@ -788,6 +874,72 @@
       "createdAt": "2025-10-05T02:39:42.170Z",
       "updatedAt": "2025-10-05T02:39:42.170Z",
       "status": "open"
+    },
+    {
+      "id": "mgd9f7vd0ueez8lcxkz",
+      "title": "pick up handball",
+      "description": "Bring your own gear. All levels welcome.",
+      "sport": "handball",
+      "location": "Pegasus Road NE, Pegasus, Calgary, Alberta, T2E 9A6, Canada",
+      "date": "2025-10-05",
+      "time": "06:11 AM",
+      "maxPlayers": 4,
+      "skillLevel": "Lobby",
+      "contactInfo": "7777777777",
+      "hostId": "mgd9eqwgw2zgstj5vjp",
+      "hostName": " Bilal Ahmed",
+      "lat": 51.09450307409697,
+      "lng": -114.00544242329735,
+      "players": [
+        {
+          "userId": "mgd9gvsd2vc98xkeqy5",
+          "playerName": " Bilal Ahmed",
+          "joinedAt": "2025-10-05T05:28:21.449Z"
+        }
+      ],
+      "createdAt": "2025-10-05T05:26:54.361Z",
+      "updatedAt": "2025-10-05T05:28:21.449Z",
+      "status": "open"
+    },
+    {
+      "id": "mgd9zzu6q75fhez8gw",
+      "title": "Handball — Game",
+      "description": "Bring your own gear. All levels welcome.",
+      "sport": "handball",
+      "location": "Indigo Lot 082, 529, 9 Avenue SW, Downtown Commercial Core, Calgary, Alberta, T2P 1G1, Canada",
+      "date": "2025-10-05",
+      "time": "06:28 AM",
+      "maxPlayers": 4,
+      "skillLevel": "Lobby",
+      "contactInfo": "1414141414",
+      "hostId": "mgd9zwbowy087o30peq",
+      "hostName": "dsadada",
+      "lat": 51.0447,
+      "lng": -114.0719,
+      "players": [],
+      "createdAt": "2025-10-05T05:43:03.726Z",
+      "updatedAt": "2025-10-05T05:43:03.726Z",
+      "status": "open"
+    },
+    {
+      "id": "mgda7eqnyd3k7nc6rra",
+      "title": "Table Tennis Drop-Ins",
+      "description": "Gear will be provided, drop-ins for table tennis.",
+      "sport": "table-tennis",
+      "location": "8 Street SW, Elbow Park, Calgary, Alberta, T2T 2A3, Canada",
+      "date": "2025-10-05",
+      "time": "06:33 AM",
+      "maxPlayers": 4,
+      "skillLevel": "Lobby",
+      "contactInfo": "9875152323",
+      "hostId": "mgda6637rcov9jehueo",
+      "hostName": "Howard",
+      "lat": 51.02559957031545,
+      "lng": -114.08341882809115,
+      "players": [],
+      "createdAt": "2025-10-05T05:48:49.631Z",
+      "updatedAt": "2025-10-05T05:48:49.631Z",
+      "status": "open"
     }
   ],
   "sports": [
@@ -795,5 +947,5 @@
     "handball",
     "table-tennis"
   ],
-  "lastUpdated": "2025-10-05T04:55:59.915Z"
+  "lastUpdated": "2025-10-05T05:49:03.196Z"
 }
