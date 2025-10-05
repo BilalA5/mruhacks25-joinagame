@@ -14,7 +14,7 @@ body {
   font-family: "Poppins", "Inter", sans-serif;
   background: #ffffff;
   color: #14532d;
-  overflow: hidden;
+  overflow: auto;
   display: flex;
   justify-content: center;
   align-items: center;
