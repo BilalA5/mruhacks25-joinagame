@@ -4,6 +4,54 @@ import HostOrJoin from './hostOrJoin.jsx'
 import UserProfile from './userProfile.jsx'
 import HostGame from './HostGame.jsx'
 import JoinGame from './JoinGame.jsx'
+import { useState, useEffect } from 'react'
+
+// Sparkles Background Component inspired by Aceternity UI
+// https://ui.aceternity.com/components/sparkles
+function SparklesBackground() {
+  const [sparkles, setSparkles] = useState([]);
+
+  useEffect(() => {
+    const newSparkles = [];
+    for (let i = 0; i < 20; i++) {
+      newSparkles.push({
+        id: i,
+        x: Math.random() * 100,
+        y: Math.random() * 100,
+        delay: Math.random() * 3,
+        size: Math.random() * 3 + 1,
+      });
+    }
+    setSparkles(newSparkles);
+  }, []);
+
+  return (
+    <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none' }}>
+      {sparkles.map((sparkle) => (
+        <div
+          key={sparkle.id}
+          style={{
+            position: 'absolute',
+            left: `${sparkle.x}%`,
+            top: `${sparkle.y}%`,
+            width: `${sparkle.size}px`,
+            height: `${sparkle.size}px`,
+            background: 'linear-gradient(45deg, #16a34a, #22c55e)',
+            borderRadius: '50%',
+            animation: `sparkle 2s ease-in-out infinite ${sparkle.delay}s`,
+            opacity: 0.7,
+          }}
+        />
+      ))}
+      <style>{`
+        @keyframes sparkle {
+          0%, 100% { opacity: 0; transform: scale(0); }
+          50% { opacity: 1; transform: scale(1); }
+        }
+      `}</style>
+    </div>
+  );
+}
 
 function SportPage() {
   const { sportName } = useParams();
