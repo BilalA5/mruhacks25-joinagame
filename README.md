@@ -1,7 +1,7 @@
 # Haris Bilal Shayan Ayan
 # joinAGame 🏓🤾🎾
 
-(Had to make new Repository Hence the lack of Commits)
+(Had to make new Repository Hence the lack of Commits)\n
 A hackathon project for **MRU Hacks 2025** that helps people **host and join local games** of niche sports like **Pickleball, Table Tennis, and Handball**.
 
 ---
